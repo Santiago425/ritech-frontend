@@ -333,6 +333,20 @@ code { background: rgba(15, 42, 61, 0.08); padding: 1px 5px; border-radius: 4px;
 }
 .campo input:focus { outline: 0; border-color: var(--azul-700); box-shadow: 0 0 0 3px rgba(22, 58, 84, 0.12); background: #fff; }
 
+.cuentas-prueba { border: 1px dashed #d5dde7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: #fbfcfd; }
+.cuentas-prueba__cabecera { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.cuentas-prueba__cabecera strong { font-size: 0.85rem; }
+.cuentas-prueba__cabecera span { font-size: 0.75rem; color: var(--texto-suave); }
+.cuenta-prueba {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 10px; border-radius: 8px; border: 1px solid var(--borde); background: var(--superficie);
+  font-size: 0.8rem; color: var(--texto); text-align: left;
+}
+.cuenta-prueba:hover { border-color: var(--cacao); background: var(--cacao-suave); }
+.cuenta-prueba__rol { font-weight: 600; white-space: nowrap; }
+.cuenta-prueba .mono { color: var(--texto-suave); overflow: hidden; text-overflow: ellipsis; }
+.cuentas-prueba__clave { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; margin-top: 2px; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1080px) {
   .indicadores { grid-template-columns: repeat(2, 1fr); }

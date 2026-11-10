@@ -7,6 +7,22 @@ import Marca from '../components/Marca.jsx'
 
 const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+const PASSWORD_PRUEBA = import.meta.env.VITE_PASSWORD_PRUEBA || 'RiTech2026*'
+const USUARIOS_PRUEBA = [
+  { rol: 'Cliente UE', email: 'cliente@importadora-eu.com' },
+  { rol: 'Gestor', email: 'gestor@ritech.co' },
+  { rol: 'Administrador', email: 'admin@ritech.co' },
+  { rol: 'Inspector', email: 'inspector@ritech.co' },
+]
+
+function copiar(texto) {
+  try {
+    navigator.clipboard?.writeText(texto)
+  } catch {
+    // Sin permiso de portapapeles: el usuario puede seleccionar el texto a mano.
+  }
+}
+
 export default function Login() {
   const { iniciarSesion } = useSesion()
   const navigate = useNavigate()
@@ -67,11 +83,33 @@ export default function Login() {
             {enviando ? <span className="spinner spinner--claro" /> : 'Ingresar'}
           </button>
 
-          {MODO_DEMO && (
-            <div className="aviso aviso--info">
-              Modo demo: usa <code>cliente@importadora-eu.com</code> o <code>gestor@ritech.co</code> con cualquier contraseña.
+          <div className="cuentas-prueba">
+            <div className="cuentas-prueba__cabecera">
+              <strong>Cuentas de prueba</strong>
+              <span>Toca una para llenar el formulario</span>
             </div>
-          )}
+            {USUARIOS_PRUEBA.map((u) => (
+              <button
+                type="button"
+                key={u.email}
+                className="cuenta-prueba"
+                onClick={() => {
+                  setEmail(u.email)
+                  setPassword(PASSWORD_PRUEBA)
+                  setError('')
+                }}
+              >
+                <span className="cuenta-prueba__rol">{u.rol}</span>
+                <span className="mono">{u.email}</span>
+              </button>
+            ))}
+            <div className="cuentas-prueba__clave">
+              <span>Contraseña: <code>{MODO_DEMO ? 'cualquiera' : PASSWORD_PRUEBA}</code></span>
+              {!MODO_DEMO && (
+                <button type="button" className="boton boton--fantasma" onClick={() => copiar(PASSWORD_PRUEBA)}>Copiar</button>
+              )}
+            </div>
+          </div>
         </form>
         <footer>© {new Date().getFullYear()} RiTech Exports S.A.S.</footer>
       </section>
