@@ -7,7 +7,7 @@ import Marca from '../components/Marca.jsx'
 
 const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const PASSWORD_PRUEBA = import.meta.env.VITE_PASSWORD_PRUEBA || 'RiTech2026*'
+const PASSWORD_PRUEBA = import.meta.env.VITE_PASSWORD_PRUEBA || '626588b636c79dd6116fe404f3e8ca43'
 const USUARIOS_PRUEBA = [
   { rol: 'Cliente UE', email: 'cliente@importadora-eu.com' },
   { rol: 'Gestor', email: 'gestor@ritech.co' },

@@ -61,7 +61,8 @@ La aplicación desplegada trabaja con **datos reales** del backend. Usuarios de 
 | Administrador | `admin@ritech.co` |
 | Inspector de calidad | `inspector@ritech.co` |
 
-La contraseña es la contraseña inicial configurada en el backend (`SEED_PASSWORD`); pídela al equipo.
+Contraseña de todas las cuentas de prueba: `626588b636c79dd6116fe404f3e8ca43`. En la pantalla de inicio de sesión
+basta con tocar una cuenta para llenar el formulario.
 
 > El backend corre en el plan gratuito de Render: si lleva un rato sin uso, la primera petición puede tardar
 > cerca de un minuto mientras el servidor despierta.

@@ -12,6 +12,9 @@ services:
         value: https://backend-ritech-f1oo.onrender.com
       - key: VITE_MODO_DEMO
         value: "false"
+      # Contraseña de las cuentas de prueba (igual a SEED_PASSWORD del backend)
+      - key: VITE_PASSWORD_PRUEBA
+        value: 626588b636c79dd6116fe404f3e8ca43
     routes:
       # Las rutas de React Router (/envios, /envios/1...) se resuelven en el navegador.
       - type: rewrite
