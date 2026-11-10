@@ -6,6 +6,7 @@ import Inicio from './pages/Inicio.jsx'
 import Envios from './pages/Envios.jsx'
 import EnvioDetalle from './pages/EnvioDetalle.jsx'
 import NoEncontrado from './pages/NoEncontrado.jsx'
+import Clientes from './pages/Clientes.jsx'
 
 function Protegida({ children, permitido = true }) {
   const { usuario } = useSesion()
@@ -15,7 +16,7 @@ function Protegida({ children, permitido = true }) {
 }
 
 export default function App() {
-  const { usuario, puedeVerEnvios } = useSesion()
+  const { usuario, puedeVerEnvios, tienePermiso } = useSesion()
 
   return (
     <Routes>
@@ -24,6 +25,7 @@ export default function App() {
         <Route index element={<Inicio />} />
         <Route path="envios" element={<Protegida permitido={puedeVerEnvios}><Envios /></Protegida>} />
         <Route path="envios/:id" element={<Protegida permitido={puedeVerEnvios}><EnvioDetalle /></Protegida>} />
+        <Route path="clientes" element={<Protegida permitido={tienePermiso('CLIENTES_CONSULTAR')}><Clientes /></Protegida>} />
         <Route path="*" element={<NoEncontrado />} />
       </Route>
     </Routes>

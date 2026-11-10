@@ -88,3 +88,18 @@ export const enviosApi = {
   detalle: (id) => api(`/api/envios/${id}`),
   registrarEvento: (id, evento) => api(`/api/envios/${id}/seguimiento`, { metodo: 'POST', cuerpo: evento }),
 }
+
+const consulta = (params) => {
+  const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ''))
+  return q.toString() ? `?${q}` : ''
+}
+
+export const catalogosApi = {
+  paises: (soloUe) => api(`/api/paises${soloUe ? '?ue=true' : ''}`),
+}
+
+export const clientesApi = {
+  listar: (filtros = {}) => api(`/api/clientes${consulta(filtros)}`),
+  crear: (cliente) => api('/api/clientes', { metodo: 'POST', cuerpo: cliente }),
+  editar: (id, cliente) => api(`/api/clientes/${id}`, { metodo: 'PUT', cuerpo: cliente }),
+}

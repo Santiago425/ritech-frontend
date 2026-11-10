@@ -10,7 +10,7 @@ function iniciales(nombre = '') {
 }
 
 export default function Layout() {
-  const { usuario, esCliente, puedeVerEnvios, cerrarSesion } = useSesion()
+  const { usuario, esCliente, puedeVerEnvios, tienePermiso, cerrarSesion } = useSesion()
   const [menuAbierto, setMenuAbierto] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -31,6 +31,14 @@ export default function Layout() {
           <NavLink to="/" end className="lateral__enlace">
             <Icono nombre="inicio" /> Inicio
           </NavLink>
+          {tienePermiso('CLIENTES_CONSULTAR') && (
+            <>
+              <span className="lateral__seccion">Comercial</span>
+              <NavLink to="/clientes" className="lateral__enlace">
+                <Icono nombre="usuarios" /> Clientes UE
+              </NavLink>
+            </>
+          )}
           {puedeVerEnvios && (
             <>
               <span className="lateral__seccion">Logística</span>

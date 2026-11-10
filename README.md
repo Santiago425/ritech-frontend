@@ -80,6 +80,14 @@ basta con tocar una cuenta para llenar el formulario.
 - Indicadores: envíos totales, en tránsito, entregados y con incidencia.
 - Próximos arribos ordenados por fecha, con aviso de retraso.
 
+### Clientes UE (SCRUM-11 y SCRUM-12)
+- Listado de importadores con búsqueda por razón social y filtros por país y estado, paginado de 20 en 20.
+- Registro y edición con validaciones: EORI obligatorio con formato válido (alerta si no coincide con el país),
+  solo países de la UE y correo válido. El backend rechaza EORI duplicados y muestra el motivo.
+- Los clientes no se eliminan: se inactivan, para conservar sus órdenes.
+- Consultar requiere `CLIENTES_CONSULTAR`; registrar y editar, `CLIENTES_GESTIONAR`.
+- Usa `GET /api/paises?ue=true`, `GET/POST /api/clientes` y `PUT /api/clientes/{id}`.
+
 ### Envíos (SCRUM-30: consultar estado y ubicación del envío)
 - Listado con filtro por estado (Programado, En puerto, En tránsito, Arribado, Entregado, Incidencia)
   y búsqueda por contenedor, booking o puerto.
@@ -186,11 +194,13 @@ El sitio está publicado en **Render** como sitio estático, definido en [`rende
 
 ## Historias de usuario (Scrum)
 
-Sprint 4: **Logística, reportes y cierre**.
+Historias con pantalla en este frontend:
 
 | Historia | Descripción | Estado en el frontend |
 |---|---|---|
 | SCRUM-8 | Iniciar sesión | ✅ Hecho |
+| SCRUM-11 | Como gestor quiero registrar y editar clientes importadores de la UE con su EORI y VAT | ✅ Hecho |
+| SCRUM-12 | Como gestor quiero consultar y filtrar clientes por país, razón social y estado | ✅ Hecho |
 | SCRUM-30 | Como cliente de la UE quiero consultar el estado y la ubicación de mi envío | ✅ Hecho |
 | SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ✅ Hecho |
 | SCRUM-31 | Como administrador quiero un tablero con toneladas exportadas y porcentaje de rechazo | ⏳ Pendiente |

@@ -15,8 +15,8 @@ const fechaHora = (n, h = 9) => {
 }
 
 const PERMISOS = {
-  ADMINISTRADOR: ['AUDITORIA_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'ORDENES_GESTIONAR', 'USUARIOS_GESTIONAR'],
-  GESTOR_EXPORTACIONES: ['CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_CREAR', 'ORDENES_GESTIONAR'],
+  ADMINISTRADOR: ['AUDITORIA_CONSULTAR', 'CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'ORDENES_GESTIONAR', 'USUARIOS_GESTIONAR'],
+  GESTOR_EXPORTACIONES: ['CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_CREAR', 'ORDENES_GESTIONAR'],
   INSPECTOR_CALIDAD: ['CERTIFICADOS_CARGAR', 'INSPECCION_REGISTRAR', 'LOTES_CONSULTAR'],
   CLIENTE_UE: ['LOTES_CONSULTAR'],
 }
@@ -73,6 +73,46 @@ const ENVIOS = [
   },
 ]
 
+const PAISES = [
+  ['AT', 'Austria'], ['BE', 'Belgica'], ['BG', 'Bulgaria'], ['HR', 'Croacia'], ['CY', 'Chipre'], ['CZ', 'Chequia'],
+  ['DK', 'Dinamarca'], ['EE', 'Estonia'], ['FI', 'Finlandia'], ['FR', 'Francia'], ['DE', 'Alemania'], ['GR', 'Grecia'],
+  ['HU', 'Hungria'], ['IE', 'Irlanda'], ['IT', 'Italia'], ['LV', 'Letonia'], ['LT', 'Lituania'], ['LU', 'Luxemburgo'],
+  ['MT', 'Malta'], ['NL', 'Paises Bajos'], ['PL', 'Polonia'], ['PT', 'Portugal'], ['RO', 'Rumania'], ['SK', 'Eslovaquia'],
+  ['SI', 'Eslovenia'], ['ES', 'Espana'], ['SE', 'Suecia'], ['CO', 'Colombia'],
+].map(([codigoIso2, nombre], i) => ({ idPais: i + 1, codigoIso2, nombre, perteneceUe: codigoIso2 !== 'CO' }))
+const idPais = (iso) => PAISES.find((p) => p.codigoIso2 === iso).idPais
+
+const CLIENTES = [
+  ['Kaffeehaus Import GmbH', 'DE123456789012', 'DE811234567', 'DE', 'Hamburgo', 'Speicherstadt 12', 'compras@kaffeehaus.de', 'ACTIVO'],
+  ['Importadora Europea SL', 'ES987654321098', 'ESB12345678', 'ES', 'Valencia', 'Av. del Puerto 45', 'pedidos@importadora-eu.com', 'ACTIVO'],
+  ['Cacao Benelux BV', 'NL445566778899', 'NL001234567B01', 'NL', 'Róterdam', 'Waalhaven 7', 'inkoop@cacaobenelux.nl', 'ACTIVO'],
+  ['Torréfaction Lyonnaise SAS', 'FR112233445566', 'FR40123456789', 'FR', 'Lyon', '18 Rue Garibaldi', 'achats@torrefaction-lyon.fr', 'INACTIVO'],
+  ['Caffè Adriatico SRL', 'IT998877665544', 'IT01234567890', 'IT', 'Trieste', 'Molo VII 3', 'acquisti@caffeadriatico.it', 'ACTIVO'],
+  ['Nordic Beans AB', 'SE556677889900', 'SE556677889901', 'SE', 'Gotemburgo', 'Hamngatan 21', 'order@nordicbeans.se', 'ACTIVO'],
+].map(([razonSocial, numeroEori, nitVat, iso, ciudad, direccion, emailContacto, estado], i) => ({
+  idCliente: i + 1, razonSocial, numeroEori, nitVat, idPais: idPais(iso), ciudad, direccion, emailContacto, estado,
+  creadoEn: fechaHora(-120 + i * 15),
+}))
+
+const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
+
+function guardarClienteDemo(id, c) {
+  const pais = PAISES.find((p) => p.idPais === Number(c.idPais))
+  if (!pais?.perteneceUe) throw errorDemo(422, 'El pais del importador debe ser miembro de la Union Europea.')
+  if (CLIENTES.some((x) => x.numeroEori === c.numeroEori && x.idCliente !== id)) {
+    throw errorDemo(409, `Ya existe un cliente con el EORI ${c.numeroEori}.`)
+  }
+  if (id) {
+    const actual = CLIENTES.find((x) => x.idCliente === id)
+    if (!actual) throw errorDemo(404, 'El cliente no existe.')
+    Object.assign(actual, c, { estado: c.estado ?? actual.estado })
+    return actual
+  }
+  const nuevo = { ...c, idCliente: Math.max(...CLIENTES.map((x) => x.idCliente)) + 1, estado: c.estado ?? 'ACTIVO', creadoEn: new Date().toISOString().slice(0, 19) }
+  CLIENTES.push(nuevo)
+  return nuevo
+}
+
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms))
 
 export async function respuestaDemo(ruta, metodo, cuerpo) {
@@ -89,6 +129,24 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     const usuario = { ...base, email: cuerpo.email.trim().toLowerCase(), permisos: PERMISOS[base.rol] }
     return { token: 'demo', tipo: 'Bearer', expiraEnSegundos: 8 * 3600, usuario }
   }
+
+  if (camino === '/api/paises') {
+    const ue = new URLSearchParams(consulta).get('ue')
+    return PAISES.filter((p) => ue === null || String(p.perteneceUe) === ue)
+  }
+
+  if (camino === '/api/clientes' && metodo === 'GET') {
+    const q = new URLSearchParams(consulta)
+    const razon = q.get('razonSocial')?.toLowerCase()
+    return CLIENTES.filter((c) =>
+      (!q.get('idPais') || c.idPais === Number(q.get('idPais'))) &&
+      (!q.get('estado') || c.estado === q.get('estado')) &&
+      (!razon || c.razonSocial.toLowerCase().includes(razon)),
+    ).sort((a, b) => a.razonSocial.localeCompare(b.razonSocial))
+  }
+  if (camino === '/api/clientes' && metodo === 'POST') return guardarClienteDemo(null, cuerpo)
+  const cliente = camino.match(/^\/api\/clientes\/(\d+)$/)
+  if (cliente && metodo === 'PUT') return guardarClienteDemo(Number(cliente[1]), cuerpo)
 
   if (camino === '/api/envios') {
     const estado = new URLSearchParams(consulta).get('estado')
