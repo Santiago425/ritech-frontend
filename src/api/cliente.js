@@ -86,4 +86,5 @@ export const authApi = {
 export const enviosApi = {
   listar: (estado) => api(`/api/envios${estado ? `?estado=${encodeURIComponent(estado)}` : ''}`),
   detalle: (id) => api(`/api/envios/${id}`),
+  registrarEvento: (id, evento) => api(`/api/envios/${id}/seguimiento`, { metodo: 'POST', cuerpo: evento }),
 }

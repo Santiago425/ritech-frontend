@@ -95,6 +95,26 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     return ENVIOS.map((e) => e.envio).filter((e) => !estado || e.estadoEnvio === estado)
   }
 
+  const evento = camino.match(/^\/api\/envios\/(\d+)\/seguimiento$/)
+  if (evento && metodo === 'POST') {
+    const encontrado = ENVIOS.find((e) => e.envio.idEnvio === Number(evento[1]))
+    if (!encontrado) throw Object.assign(new Error('El envio no existe.'), { estado: 404, campos: {} })
+    if (encontrado.envio.estadoEnvio === 'ENTREGADO') {
+      throw Object.assign(new Error('El envio ya fue entregado; no admite mas eventos.'), { estado: 400, campos: {} })
+    }
+    const siguienteId = Math.max(...ENVIOS.flatMap((e) => e.seguimiento.map((s) => s.idSeguimiento))) + 1
+    encontrado.seguimiento.push({
+      idSeguimiento: siguienteId,
+      fechaEvento: cuerpo.fechaEvento ?? new Date().toISOString().slice(0, 19),
+      ubicacion: cuerpo.ubicacion,
+      estado: cuerpo.estado,
+      observacion: cuerpo.observacion ?? null,
+    })
+    encontrado.seguimiento.sort((a, b) => a.fechaEvento.localeCompare(b.fechaEvento))
+    encontrado.envio.estadoEnvio = cuerpo.estado
+    return encontrado
+  }
+
   const detalle = camino.match(/^\/api\/envios\/(\d+)$/)
   if (detalle) {
     const encontrado = ENVIOS.find((e) => e.envio.idEnvio === Number(detalle[1]))

@@ -91,6 +91,13 @@ basta con tocar una cuenta para llenar el formulario.
   - Datos del envío: orden, transportista, contenedor ISO 6346, booking/BL, fechas de zarpe y arribo.
   - **Bitácora completa** de eventos de seguimiento.
 
+### Registro de eventos de seguimiento (SCRUM-29)
+- El gestor (permiso `ORDENES_GESTIONAR`) registra eventos desde el detalle del envío con el botón **Registrar evento**.
+- Formulario con estado nuevo (sugiere la siguiente etapa), ubicación, fecha y hora, y observación.
+- Validaciones antes de enviar: ubicación obligatoria, fecha no futura y observación obligatoria en una incidencia.
+- Avisa que `En tránsito` y `Entregado` también cambian el estado de la orden; un envío entregado ya no admite eventos.
+- Usa `POST /api/envios/{id}/seguimiento` y actualiza la ruta, las etapas y la bitácora sin recargar la página.
+
 ### Calidad de la interfaz
 - Diseño adaptable a escritorio, tableta y celular.
 - Estados de carga, vacío y error en cada pantalla, con opción de reintentar.
@@ -185,7 +192,7 @@ Sprint 4: **Logística, reportes y cierre**.
 |---|---|---|
 | SCRUM-8 | Iniciar sesión | ✅ Hecho |
 | SCRUM-30 | Como cliente de la UE quiero consultar el estado y la ubicación de mi envío | ✅ Hecho |
-| SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ⏳ Pendiente |
+| SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ✅ Hecho |
 | SCRUM-31 | Como administrador quiero un tablero con toneladas exportadas y porcentaje de rechazo | ⏳ Pendiente |
 | SCRUM-32 | Como administrador quiero exportar reportes de cumplimiento normativo a hoja de cálculo | ⏳ Pendiente |
 | SCRUM-66 | Manual de usuario por rol (Confluence) | ⏳ Pendiente |
