@@ -9,7 +9,7 @@
 ![Vite](https://img.shields.io/badge/Vite-6-646cff?style=for-the-badge&logo=vite&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-desplegado-0f2a3d?style=for-the-badge&logo=render&logoColor=white)
 
-[Demo en vivo](https://ritech-frontend-atwu.onrender.com) · [Backend](https://github.com/walterjojoa/BACKEND-CACAO) · [Tablero Jira](https://cammb1004.atlassian.net/jira/software/projects/SCRUM/boards/1)
+[Demo en vivo](https://ritech-frontend-atwu.onrender.com) · [API (Swagger)](https://backend-ritech-f1oo.onrender.com/docs) · [Backend](https://github.com/walterjojoa/BACKEND-CACAO) · [Base de datos](https://github.com/camilin0811/BASE-DE-DATOS-RITECH-EXPORTS) · [Tablero Jira](https://cammb1004.atlassian.net/jira/software/projects/SCRUM/boards/1)
 
 ![Detalle de un envío](docs/capturas/detalle-envio.png)
 
@@ -45,10 +45,14 @@ Colombia. El trabajo se organiza en Jira (proyecto `SCRUM`) y la documentación 
 
 ## Demo en vivo
 
-**https://ritech-frontend-atwu.onrender.com**
+| Componente | URL |
+|---|---|
+| Frontend | https://ritech-frontend-atwu.onrender.com |
+| API REST | https://backend-ritech-f1oo.onrender.com |
+| Documentación de la API (Swagger) | https://backend-ritech-f1oo.onrender.com/docs |
+| Base de datos | MySQL 8 administrado en Aiven |
 
-Mientras el backend se publica en la nube, la demo funciona en **modo demo** con datos de ejemplo.
-Puedes entrar con cualquiera de estos usuarios y cualquier contraseña:
+La aplicación desplegada trabaja con **datos reales** del backend. Usuarios de prueba:
 
 | Rol | Correo |
 |---|---|
@@ -56,6 +60,11 @@ Puedes entrar con cualquiera de estos usuarios y cualquier contraseña:
 | Gestor de exportaciones | `gestor@ritech.co` |
 | Administrador | `admin@ritech.co` |
 | Inspector de calidad | `inspector@ritech.co` |
+
+La contraseña es la contraseña inicial configurada en el backend (`SEED_PASSWORD`); pídela al equipo.
+
+> El backend corre en el plan gratuito de Render: si lleva un rato sin uso, la primera petición puede tardar
+> cerca de un minuto mientras el servidor despierta.
 
 ## Funcionalidades
 
@@ -106,14 +115,14 @@ Puedes entrar con cualquiera de estos usuarios y cualquier contraseña:
 | Navegación | React Router 7 |
 | Estilos | CSS propio con variables de diseño (sin librerías externas) |
 | Calidad de código | ESLint |
-| Despliegue | Render (sitio estático) |
+| Despliegue | Render (frontend y backend) · Aiven (MySQL) |
 | Backend | Java 17 · Spring Boot 3.5 · Spring Security (JWT) · MySQL 8 |
 
 ## Arquitectura
 
 ```
- Navegador ──► Frontend React (Render) ──HTTPS + JWT──► API Spring Boot ──► MySQL 8
-                                                       (BACKEND-CACAO)     db_ritech_exports
+ Navegador ──► Frontend React ──HTTPS + JWT──► API Spring Boot ──► MySQL 8
+               (Render, estático)              (Render)            (Aiven)
 ```
 
 - El frontend no guarda reglas de negocio: las validaciones y permisos viven en el backend y la base de datos.
@@ -163,9 +172,9 @@ El sitio está publicado en **Render** como sitio estático, definido en [`rende
 - Cada push a `main` se despliega automáticamente.
 - Al ser sitio estático, no se suspende por inactividad.
 
-**Conectar con el backend en la nube:** cuando el backend tenga URL pública, cambiar en `render.yaml`
-`VITE_API_URL` por esa URL y `VITE_MODO_DEMO` por `"false"`, y agregar
-`https://ritech-frontend-atwu.onrender.com` a `ALLOWED_ORIGINS` del backend.
+**Conexión con el backend:** `render.yaml` define `VITE_API_URL=https://backend-ritech-f1oo.onrender.com` y
+`VITE_MODO_DEMO=false`. El backend debe incluir `https://ritech-frontend-atwu.onrender.com` en su variable
+`ALLOWED_ORIGINS` para aceptar las peticiones del navegador.
 
 ## Historias de usuario (Scrum)
 

@@ -7,11 +7,11 @@ services:
     staticPublishPath: dist
     pullRequestPreviewsEnabled: false
     envVars:
-      # Cuando el backend esté desplegado: poner su URL aquí y VITE_MODO_DEMO en false.
+      # Backend desplegado en Render (BACKEND-CACAO)
       - key: VITE_API_URL
-        value: http://localhost:8080
+        value: https://backend-ritech-f1oo.onrender.com
       - key: VITE_MODO_DEMO
-        value: "true"
+        value: "false"
     routes:
       # Las rutas de React Router (/envios, /envios/1...) se resuelven en el navegador.
       - type: rewrite
