@@ -81,7 +81,7 @@ function ResumenEnvios() {
 }
 
 export default function Inicio() {
-  const { usuario, puedeVerEnvios } = useSesion()
+  const { usuario, puedeVerEnvios, tienePermiso } = useSesion()
   const nombre = usuario.nombreCompleto.split(' ')[0]
 
   return (
@@ -99,7 +99,12 @@ export default function Inicio() {
       ) : (
         <section className="tarjeta">
           <h2>Bienvenido a RiTech Exports</h2>
-          <p className="texto-suave">Tu rol no tiene módulos de logística. Los módulos de tu rol aparecerán en el menú lateral.</p>
+          <p className="texto-suave espacio-abajo">Desde el menú lateral entras a los módulos de tu rol.</p>
+          {tienePermiso('LOTES_CONSULTAR') && (
+            <Link to={tienePermiso('INSPECCION_REGISTRAR') ? '/lotes?estado=EN_INSPECCION' : '/lotes'} className="boton boton--primario">
+              {tienePermiso('INSPECCION_REGISTRAR') ? 'Ver lotes por inspeccionar' : 'Ver lotes'}
+            </Link>
+          )}
         </section>
       )}
     </div>

@@ -112,6 +112,30 @@ const FINCAS = [
   { idFinca: 4, idProductor: 3, nombreFinca: 'Los Naranjos', areaHectareas: 2.1, latitud: 2.402300, longitud: -76.682100, poligonoGeojson: null, fechaVerificacionDeforestacion: null },
 ]
 
+const PRODUCTOS = [
+  { idProducto: 1, tipo: 'CAFE', nombreComercial: 'Café verde excelso', variedad: 'Castillo', codigoHs: '090111', unidadMedida: 'KG' },
+  { idProducto: 2, tipo: 'CACAO', nombreComercial: 'Cacao en grano fino de aroma', variedad: 'CCN-51', codigoHs: '180100', unidadMedida: 'KG' },
+]
+
+const LOTES = [
+  { idLote: 1, codigoLote: 'LT-2026-0001', idProducto: 1, pesoNetoKg: 19200, pesoBrutoKg: 19450, fechaCosecha: fecha(-80), fechaRegistro: fechaHora(-75), estadoLote: 'ASIGNADO' },
+  { idLote: 2, codigoLote: 'LT-2026-0002', idProducto: 1, pesoNetoKg: 12000, pesoBrutoKg: 12180, fechaCosecha: fecha(-20), fechaRegistro: fechaHora(-15), estadoLote: 'EN_INSPECCION' },
+  { idLote: 3, codigoLote: 'LT-2026-0003', idProducto: 2, pesoNetoKg: 8500, pesoBrutoKg: 8640, fechaCosecha: fecha(-12), fechaRegistro: fechaHora(-10), estadoLote: 'REGISTRADO' },
+  { idLote: 4, codigoLote: 'LT-2026-0004', idProducto: 2, pesoNetoKg: 6000, pesoBrutoKg: 6100, fechaCosecha: fecha(-40), fechaRegistro: fechaHora(-35), estadoLote: 'RECHAZADO' },
+]
+
+const INSPECCIONES = [
+  { idInspeccion: 1, idLote: 1, idUsuarioInspector: 3, fechaInspeccion: fecha(-70), humedadPorcentaje: 11.2, defectosPor300g: 4, puntajeTaza: 84.5, ocratoxinaPpb: 1.1, aflatoxinasPpb: 0.4, resultado: 'APROBADO', observaciones: 'Grano uniforme, perfil achocolatado' },
+  { idInspeccion: 2, idLote: 4, idUsuarioInspector: 3, fechaInspeccion: fecha(-30), humedadPorcentaje: 9.8, defectosPor300g: 18, puntajeTaza: null, ocratoxinaPpb: 3.4, aflatoxinasPpb: 2.9, resultado: 'RECHAZADO', observaciones: 'Moho visible en el 6% de la muestra y fermentación incompleta' },
+]
+
+const ORIGEN = {
+  1: [[1, 2, 60, 11520], [1, 1, 40, 7680]],
+  2: [[1, 2, 100, 12000]],
+  3: [[2, 3, 100, 8500]],
+  4: [[3, 4, 100, 6000]],
+}
+
 const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
 
 function guardarClienteDemo(id, c) {
@@ -183,6 +207,43 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
   if (fincasDe && metodo === 'POST') return guardarFincaDemo(null, Number(fincasDe[1]), cuerpo)
   const finca = camino.match(/^\/api\/fincas\/(\d+)$/)
   if (finca && metodo === 'PUT') return guardarFincaDemo(Number(finca[1]), null, cuerpo)
+
+  if (camino === '/api/productos') return PRODUCTOS
+  if (camino === '/api/lotes') {
+    const q = new URLSearchParams(consulta)
+    return LOTES.filter((l) => (!q.get('estado') || l.estadoLote === q.get('estado')) && (!q.get('idProducto') || l.idProducto === Number(q.get('idProducto'))))
+      .sort((a, b) => b.fechaRegistro.localeCompare(a.fechaRegistro))
+  }
+  const lote = camino.match(/^\/api\/lotes\/(\d+)(\/\w+)?$/)
+  if (lote) {
+    const l = LOTES.find((x) => x.idLote === Number(lote[1]))
+    if (!l) throw errorDemo(404, 'El lote no existe.')
+    if (!lote[2]) return l
+    if (lote[2] === '/inspecciones' && metodo === 'GET') {
+      return INSPECCIONES.filter((i) => i.idLote === l.idLote).sort((a, b) => b.fechaInspeccion.localeCompare(a.fechaInspeccion) || b.idInspeccion - a.idInspeccion)
+    }
+    if (lote[2] === '/inspecciones' && metodo === 'POST') {
+      if (!['REGISTRADO', 'EN_INSPECCION', 'RECHAZADO'].includes(l.estadoLote)) throw errorDemo(400, `No se puede inspeccionar un lote en estado ${l.estadoLote}.`)
+      if (cuerpo.resultado === 'RECHAZADO' && (cuerpo.observaciones ?? '').trim().length < 20) {
+        throw errorDemo(400, 'Para rechazar un lote la observacion es obligatoria (minimo 20 caracteres).')
+      }
+      const i = { ...cuerpo, idInspeccion: Math.max(...INSPECCIONES.map((x) => x.idInspeccion)) + 1, idLote: l.idLote, idUsuarioInspector: 3, fechaInspeccion: cuerpo.fechaInspeccion ?? fecha(0) }
+      INSPECCIONES.push(i)
+      if (cuerpo.resultado !== 'CONDICIONADO') l.estadoLote = cuerpo.resultado
+      return { inspeccion: i, estadoLote: l.estadoLote }
+    }
+    if (lote[2] === '/trazabilidad') {
+      const p = PRODUCTOS.find((x) => x.idProducto === l.idProducto)
+      const origen = (ORIGEN[l.idLote] ?? []).map(([idP, idF, pct, kg]) => {
+        const prod = PRODUCTORES.find((x) => x.idProductor === idP)
+        const f = FINCAS.find((x) => x.idFinca === idF)
+        return { productor: prod.nombre, nombreFinca: f.nombreFinca, areaHectareas: f.areaHectareas, latitud: f.latitud, longitud: f.longitud, porcentajeAporte: pct, kgAportados: kg, municipio: prod.municipio, departamento: prod.departamento }
+      })
+      const sumaPorcentaje = origen.reduce((a, o) => a + o.porcentajeAporte, 0)
+      const sumaKg = origen.reduce((a, o) => a + o.kgAportados, 0)
+      return { codigoLote: l.codigoLote, producto: p.nombreComercial, codigoHs: p.codigoHs, pesoNetoKg: l.pesoNetoKg, estadoLote: l.estadoLote, sumaPorcentaje, sumaKg, completa: Math.abs(sumaPorcentaje - 100) < 0.01 && Math.abs(sumaKg - l.pesoNetoKg) <= l.pesoNetoKg * 0.005, origen }
+    }
+  }
 
   if (camino === '/api/paises') {
     const ue = new URLSearchParams(consulta).get('ue')

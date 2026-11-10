@@ -113,3 +113,12 @@ export const productoresApi = {
   crearFinca: (id, f) => api(`/api/productores/${id}/fincas`, { metodo: 'POST', cuerpo: f }),
   editarFinca: (idFinca, f) => api(`/api/fincas/${idFinca}`, { metodo: 'PUT', cuerpo: f }),
 }
+
+export const lotesApi = {
+  productos: () => api('/api/productos'),
+  listar: (filtros = {}) => api(`/api/lotes${consulta(filtros)}`),
+  obtener: (id) => api(`/api/lotes/${id}`),
+  inspecciones: (id) => api(`/api/lotes/${id}/inspecciones`),
+  inspeccionar: (id, i) => api(`/api/lotes/${id}/inspecciones`, { metodo: 'POST', cuerpo: i }),
+  trazabilidad: (id) => api(`/api/lotes/${id}/trazabilidad`),
+}

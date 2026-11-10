@@ -60,3 +60,23 @@ export function avanceRuta(envio) {
   const t = (Date.now() - zarpe) / (arribo - zarpe)
   return Math.min(0.95, Math.max(0.12, t))
 }
+
+export const ESTADOS_LOTE = {
+  REGISTRADO: { etiqueta: 'Registrado', tono: 'neutro' },
+  EN_INSPECCION: { etiqueta: 'En inspección', tono: 'info' },
+  APROBADO: { etiqueta: 'Aprobado', tono: 'exito' },
+  RECHAZADO: { etiqueta: 'Rechazado', tono: 'alerta' },
+  ASIGNADO: { etiqueta: 'Asignado a orden', tono: 'primario' },
+  EXPORTADO: { etiqueta: 'Exportado', tono: 'primario' },
+}
+
+export const RESULTADOS_INSPECCION = {
+  APROBADO: { etiqueta: 'Aprobado', tono: 'exito' },
+  CONDICIONADO: { etiqueta: 'Condicionado', tono: 'info' },
+  RECHAZADO: { etiqueta: 'Rechazado', tono: 'alerta' },
+}
+
+// Estados en los que el backend acepta una inspección (InspeccionServicio.INSPECCIONABLE).
+export const LOTE_INSPECCIONABLE = ['REGISTRADO', 'EN_INSPECCION', 'RECHAZADO']
+
+export const formatoKg = (n) => (n == null ? '—' : `${Number(n).toLocaleString('es-CO', { maximumFractionDigits: 2 })} kg`)

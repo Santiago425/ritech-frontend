@@ -413,6 +413,43 @@ code { background: rgba(15, 42, 61, 0.08); padding: 1px 5px; border-radius: 4px;
 .acciones--pequenas .boton { height: 32px; padding: 0 12px; font-size: 0.82rem; }
 .enlace-boton { background: none; border: 0; padding: 0; color: var(--azul-700); font-weight: 600; font-size: inherit; text-decoration: underline; }
 
+/* ---------- Lotes, calidad y trazabilidad ---------- */
+.tipo { display: inline-block; padding: 1px 7px; margin-right: 4px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
+.tipo--cafe { background: #f3e8dc; color: #7a4a1f; }
+.tipo--cacao { background: #efe3f6; color: #6b2f87; }
+.indicador__valor--md { font-size: 1.15rem; }
+.pestanas { display: flex; gap: 4px; border-bottom: 1px solid var(--borde); }
+.pestanas button {
+  display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 0; background: none;
+  color: var(--texto-suave); font-weight: 600; font-size: 0.92rem; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.pestanas button:hover { color: var(--texto); }
+.pestanas button.activa { color: var(--azul-800); border-bottom-color: var(--cacao); }
+.espacio-abajo { margin-bottom: 16px; }
+.boton--peligro { background: var(--alerta); color: #fff; }
+.boton--peligro:hover:not(:disabled) { background: #9a3412; }
+
+.inspecciones { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.inspeccion { border: 1px solid var(--borde); border-left: 4px solid var(--neutro); border-radius: 10px; padding: 14px 16px; }
+.inspeccion--exito { border-left-color: var(--exito); }
+.inspeccion--alerta { border-left-color: var(--alerta); }
+.inspeccion--info { border-left-color: var(--info); }
+.inspeccion__cabecera { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.85rem; }
+.metricas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 12px 0 0; }
+.metricas div { background: #f8fafc; border-radius: 8px; padding: 8px 10px; }
+.metricas dt { font-size: 0.72rem; color: var(--texto-suave); }
+.metricas dd { margin: 2px 0 0; font-weight: 700; font-size: 0.95rem; }
+.inspeccion__obs { margin-top: 10px; font-size: 0.88rem; color: #334155; }
+.rejilla-metricas { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+
+.aporte { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--neutro-suave); }
+.aporte span { height: 100%; }
+.aporte span + span { border-left: 2px solid #fff; }
+.aporte__resumen { margin: 8px 0 16px; font-size: 0.85rem; }
+.punto-color { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+.finca__productor { font-size: 0.8rem; margin-top: 2px; }
+.finca__dato--ancho { grid-column: 1 / -1; }
+
 /* ---------- Modal ---------- */
 .modal {
   position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px;
@@ -456,6 +493,7 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1080px) {
+  .metricas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .fincas { grid-template-columns: 1fr; }
   .fincas__lista { max-height: none; }
   .finca-form { grid-template-columns: 1fr; }
@@ -483,6 +521,8 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .acciones { width: 100%; }
   .rejilla-campos { grid-template-columns: 1fr; }
   .indicadores--3 { grid-template-columns: 1fr; }
+  .metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pestanas button { flex: 1; justify-content: center; }
   .finca__datos { grid-template-columns: 1fr; }
   .filtros__grupo > * { flex: 1 1 100%; }
   .tabla td .enlace { overflow: hidden; text-overflow: ellipsis; }

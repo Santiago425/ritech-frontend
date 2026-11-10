@@ -100,6 +100,19 @@ basta con tocar una cuenta para llenar el formulario.
 - Consultar requiere `PRODUCTORES_GESTIONAR` o `LOTES_TRAZABILIDAD`; registrar y editar, `PRODUCTORES_GESTIONAR`.
 - Usa `GET/POST /api/productores`, `PUT /api/productores/{id}`, `GET/POST /api/productores/{id}/fincas` y `PUT /api/fincas/{id}`.
 
+### Lotes: calidad y trazabilidad (SCRUM-18 y SCRUM-19)
+- Listado de lotes con filtros por estado y producto. El inspector ve cuántos lotes esperan inspección.
+- Ficha del lote con peso neto y bruto, fechas de cosecha y registro, y dos pestañas:
+  - **Calidad:** historial de inspecciones con humedad, defectos, puntaje en taza (café), ocratoxina y
+    aflatoxinas. El inspector registra la inspección y emite el dictamen: **Aprobado**, **Condicionado** o
+    **Rechazado**. Para rechazar, la observación es obligatoria (mínimo 20 caracteres) y se avisa que un lote
+    rechazado no puede asignarse a una orden.
+  - **Trazabilidad:** barra de aporte por finca, total de kilos frente al peso neto, indicador de trazabilidad
+    completa y **mapa** con las fincas de origen, su productor, municipio, coordenadas y kilos aportados.
+- El Cliente UE ve "Mis lotes" con el origen y la calidad de los lotes de sus órdenes.
+- Usa `GET /api/lotes`, `GET /api/lotes/{id}`, `GET/POST /api/lotes/{id}/inspecciones`,
+  `GET /api/lotes/{id}/trazabilidad` y `GET /api/productos`.
+
 ### Envíos (SCRUM-30: consultar estado y ubicación del envío)
 - Listado con filtro por estado (Programado, En puerto, En tránsito, Arribado, Entregado, Incidencia)
   y búsqueda por contenedor, booking o puerto.
@@ -215,6 +228,8 @@ Historias con pantalla en este frontend:
 | SCRUM-11 | Como gestor quiero registrar y editar clientes importadores de la UE con su EORI y VAT | ✅ Hecho |
 | SCRUM-12 | Como gestor quiero consultar y filtrar clientes por país, razón social y estado | ✅ Hecho |
 | SCRUM-14 | Como gestor quiero registrar productores y sus fincas con geolocalización | ✅ Hecho |
+| SCRUM-18 | Como inspector quiero aprobar o rechazar un lote dejando observación obligatoria | ✅ Hecho |
+| SCRUM-19 | Como cliente de la UE quiero consultar la trazabilidad completa del lote que compré | ✅ Hecho |
 | SCRUM-30 | Como cliente de la UE quiero consultar el estado y la ubicación de mi envío | ✅ Hecho |
 | SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ✅ Hecho |
 | SCRUM-31 | Como administrador quiero un tablero con toneladas exportadas y porcentaje de rechazo | ⏳ Pendiente |
