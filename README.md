@@ -88,6 +88,18 @@ basta con tocar una cuenta para llenar el formulario.
 - Consultar requiere `CLIENTES_CONSULTAR`; registrar y editar, `CLIENTES_GESTIONAR`.
 - Usa `GET /api/paises?ue=true`, `GET/POST /api/clientes` y `PUT /api/clientes/{id}`.
 
+### Productores y fincas (SCRUM-14)
+- Listado de productores con búsqueda por nombre, NIT/cédula o municipio y filtro por departamento.
+- Registro y edición del productor (NIT o cédula único; el backend avisa si ya existe).
+- Ficha del productor con indicadores (número de fincas, área total, fincas que cumplen EUDR) y
+  **mapa interactivo** (OpenStreetMap) con el punto y el polígono de cada finca.
+- Registro y edición de fincas **sobre el mapa**: un clic ubica la finca y en modo polígono se dibujan los
+  límites del predio esquina por esquina. Calcula el área aproximada del polígono.
+- Reglas EUDR: latitud entre -90 y 90, longitud entre -180 y 180, y **polígono obligatorio si la finca supera
+  4 hectáreas**. Cada finca muestra si cumple, si le falta el polígono o si no tiene verificación de no deforestación.
+- Consultar requiere `PRODUCTORES_GESTIONAR` o `LOTES_TRAZABILIDAD`; registrar y editar, `PRODUCTORES_GESTIONAR`.
+- Usa `GET/POST /api/productores`, `PUT /api/productores/{id}`, `GET/POST /api/productores/{id}/fincas` y `PUT /api/fincas/{id}`.
+
 ### Envíos (SCRUM-30: consultar estado y ubicación del envío)
 - Listado con filtro por estado (Programado, En puerto, En tránsito, Arribado, Entregado, Incidencia)
   y búsqueda por contenedor, booking o puerto.
@@ -129,6 +141,7 @@ basta con tocar una cuenta para llenar el formulario.
 | Interfaz | React 19 |
 | Empaquetado y servidor de desarrollo | Vite 6 |
 | Navegación | React Router 7 |
+| Mapas | Leaflet · React Leaflet · OpenStreetMap |
 | Estilos | CSS propio con variables de diseño (sin librerías externas) |
 | Calidad de código | ESLint |
 | Despliegue | Render (frontend y backend) · Aiven (MySQL) |
@@ -201,6 +214,7 @@ Historias con pantalla en este frontend:
 | SCRUM-8 | Iniciar sesión | ✅ Hecho |
 | SCRUM-11 | Como gestor quiero registrar y editar clientes importadores de la UE con su EORI y VAT | ✅ Hecho |
 | SCRUM-12 | Como gestor quiero consultar y filtrar clientes por país, razón social y estado | ✅ Hecho |
+| SCRUM-14 | Como gestor quiero registrar productores y sus fincas con geolocalización | ✅ Hecho |
 | SCRUM-30 | Como cliente de la UE quiero consultar el estado y la ubicación de mi envío | ✅ Hecho |
 | SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ✅ Hecho |
 | SCRUM-31 | Como administrador quiero un tablero con toneladas exportadas y porcentaje de rechazo | ⏳ Pendiente |

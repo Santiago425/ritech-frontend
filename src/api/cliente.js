@@ -103,3 +103,13 @@ export const clientesApi = {
   crear: (cliente) => api('/api/clientes', { metodo: 'POST', cuerpo: cliente }),
   editar: (id, cliente) => api(`/api/clientes/${id}`, { metodo: 'PUT', cuerpo: cliente }),
 }
+
+export const productoresApi = {
+  listar: () => api('/api/productores'),
+  obtener: (id) => api(`/api/productores/${id}`),
+  crear: (p) => api('/api/productores', { metodo: 'POST', cuerpo: p }),
+  editar: (id, p) => api(`/api/productores/${id}`, { metodo: 'PUT', cuerpo: p }),
+  fincas: (id) => api(`/api/productores/${id}/fincas`),
+  crearFinca: (id, f) => api(`/api/productores/${id}/fincas`, { metodo: 'POST', cuerpo: f }),
+  editarFinca: (idFinca, f) => api(`/api/fincas/${idFinca}`, { metodo: 'PUT', cuerpo: f }),
+}

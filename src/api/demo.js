@@ -15,8 +15,8 @@ const fechaHora = (n, h = 9) => {
 }
 
 const PERMISOS = {
-  ADMINISTRADOR: ['AUDITORIA_CONSULTAR', 'CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'ORDENES_GESTIONAR', 'USUARIOS_GESTIONAR'],
-  GESTOR_EXPORTACIONES: ['CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_CREAR', 'ORDENES_GESTIONAR'],
+  ADMINISTRADOR: ['AUDITORIA_CONSULTAR', 'CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_TRAZABILIDAD', 'ORDENES_GESTIONAR', 'PRODUCTORES_GESTIONAR', 'USUARIOS_GESTIONAR'],
+  GESTOR_EXPORTACIONES: ['CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_CREAR', 'LOTES_TRAZABILIDAD', 'ORDENES_GESTIONAR', 'PRODUCTORES_GESTIONAR'],
   INSPECTOR_CALIDAD: ['CERTIFICADOS_CARGAR', 'INSPECCION_REGISTRAR', 'LOTES_CONSULTAR'],
   CLIENTE_UE: ['LOTES_CONSULTAR'],
 }
@@ -94,6 +94,24 @@ const CLIENTES = [
   creadoEn: fechaHora(-120 + i * 15),
 }))
 
+const PRODUCTORES = [
+  { idProductor: 1, nitOCedula: '10612345', nombre: 'Asociación de Caficultores del Cauca', municipio: 'Popayán', departamento: 'Cauca', telefono: '3104567890' },
+  { idProductor: 2, nitOCedula: '900456789-1', nombre: 'Cooperativa Cacaotera del Huila', municipio: 'Pitalito', departamento: 'Huila', telefono: '3157778899' },
+  { idProductor: 3, nitOCedula: '76321456', nombre: 'Rosa Elena Muñoz', municipio: 'Timbío', departamento: 'Cauca', telefono: null },
+]
+
+const cuadrado = (lat, lng, d) => JSON.stringify({
+  type: 'Polygon',
+  coordinates: [[[lng - d, lat - d], [lng + d, lat - d], [lng + d, lat + d], [lng - d, lat + d], [lng - d, lat - d]]],
+})
+
+const FINCAS = [
+  { idFinca: 1, idProductor: 1, nombreFinca: 'La Esperanza', areaHectareas: 3.5, latitud: 2.444814, longitud: -76.614739, poligonoGeojson: null, fechaVerificacionDeforestacion: fecha(-90) },
+  { idFinca: 2, idProductor: 1, nombreFinca: 'El Mirador', areaHectareas: 12.8, latitud: 2.470120, longitud: -76.585300, poligonoGeojson: cuadrado(2.470120, -76.585300, 0.0016), fechaVerificacionDeforestacion: fecha(-60) },
+  { idFinca: 3, idProductor: 2, nombreFinca: 'Villa Cacao', areaHectareas: 7.2, latitud: 1.853500, longitud: -76.051200, poligonoGeojson: cuadrado(1.853500, -76.051200, 0.0012), fechaVerificacionDeforestacion: fecha(-30) },
+  { idFinca: 4, idProductor: 3, nombreFinca: 'Los Naranjos', areaHectareas: 2.1, latitud: 2.402300, longitud: -76.682100, poligonoGeojson: null, fechaVerificacionDeforestacion: null },
+]
+
 const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
 
 function guardarClienteDemo(id, c) {
@@ -113,6 +131,27 @@ function guardarClienteDemo(id, c) {
   return nuevo
 }
 
+function guardarProductorDemo(id, p) {
+  if (PRODUCTORES.some((x) => x.nitOCedula === p.nitOCedula && x.idProductor !== id)) {
+    throw errorDemo(409, `Ya existe un productor con el NIT o cedula ${p.nitOCedula}.`)
+  }
+  if (id) return Object.assign(PRODUCTORES.find((x) => x.idProductor === id), p)
+  const nuevo = { ...p, idProductor: Math.max(...PRODUCTORES.map((x) => x.idProductor)) + 1 }
+  PRODUCTORES.push(nuevo)
+  return nuevo
+}
+
+function guardarFincaDemo(id, idProductor, f) {
+  if (Number(f.areaHectareas) > 4 && !f.poligonoGeojson) {
+    throw errorDemo(400, 'Las fincas de mas de 4 hectareas requieren poligono de geolocalizacion (EUDR).')
+  }
+  const datos = { ...f, poligonoGeojson: f.poligonoGeojson ? JSON.stringify(f.poligonoGeojson) : null }
+  if (id) return Object.assign(FINCAS.find((x) => x.idFinca === id), datos)
+  const nueva = { ...datos, idFinca: Math.max(...FINCAS.map((x) => x.idFinca)) + 1, idProductor }
+  FINCAS.push(nueva)
+  return nueva
+}
+
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms))
 
 export async function respuestaDemo(ruta, metodo, cuerpo) {
@@ -129,6 +168,21 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     const usuario = { ...base, email: cuerpo.email.trim().toLowerCase(), permisos: PERMISOS[base.rol] }
     return { token: 'demo', tipo: 'Bearer', expiraEnSegundos: 8 * 3600, usuario }
   }
+
+  if (camino === '/api/productores' && metodo === 'GET') return [...PRODUCTORES].sort((a, b) => a.nombre.localeCompare(b.nombre))
+  if (camino === '/api/productores' && metodo === 'POST') return guardarProductorDemo(null, cuerpo)
+  const productor = camino.match(/^\/api\/productores\/(\d+)$/)
+  if (productor && metodo === 'GET') {
+    const encontrado = PRODUCTORES.find((p) => p.idProductor === Number(productor[1]))
+    if (!encontrado) throw errorDemo(404, 'El productor no existe.')
+    return encontrado
+  }
+  if (productor && metodo === 'PUT') return guardarProductorDemo(Number(productor[1]), cuerpo)
+  const fincasDe = camino.match(/^\/api\/productores\/(\d+)\/fincas$/)
+  if (fincasDe && metodo === 'GET') return FINCAS.filter((f) => f.idProductor === Number(fincasDe[1])).sort((a, b) => a.nombreFinca.localeCompare(b.nombreFinca))
+  if (fincasDe && metodo === 'POST') return guardarFincaDemo(null, Number(fincasDe[1]), cuerpo)
+  const finca = camino.match(/^\/api\/fincas\/(\d+)$/)
+  if (finca && metodo === 'PUT') return guardarFincaDemo(Number(finca[1]), null, cuerpo)
 
   if (camino === '/api/paises') {
     const ue = new URLSearchParams(consulta).get('ue')

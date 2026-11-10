@@ -7,6 +7,8 @@ import Envios from './pages/Envios.jsx'
 import EnvioDetalle from './pages/EnvioDetalle.jsx'
 import NoEncontrado from './pages/NoEncontrado.jsx'
 import Clientes from './pages/Clientes.jsx'
+import Productores from './pages/Productores.jsx'
+import ProductorDetalle from './pages/ProductorDetalle.jsx'
 
 function Protegida({ children, permitido = true }) {
   const { usuario } = useSesion()
@@ -17,6 +19,8 @@ function Protegida({ children, permitido = true }) {
 
 export default function App() {
   const { usuario, puedeVerEnvios, tienePermiso } = useSesion()
+  // GET /api/productores: hasAnyAuthority('PRODUCTORES_GESTIONAR','LOTES_TRAZABILIDAD')
+  const puedeVerProductores = tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD')
 
   return (
     <Routes>
@@ -26,6 +30,8 @@ export default function App() {
         <Route path="envios" element={<Protegida permitido={puedeVerEnvios}><Envios /></Protegida>} />
         <Route path="envios/:id" element={<Protegida permitido={puedeVerEnvios}><EnvioDetalle /></Protegida>} />
         <Route path="clientes" element={<Protegida permitido={tienePermiso('CLIENTES_CONSULTAR')}><Clientes /></Protegida>} />
+        <Route path="productores" element={<Protegida permitido={puedeVerProductores}><Productores /></Protegida>} />
+        <Route path="productores/:id" element={<Protegida permitido={puedeVerProductores}><ProductorDetalle /></Protegida>} />
         <Route path="*" element={<NoEncontrado />} />
       </Route>
     </Routes>

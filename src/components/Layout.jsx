@@ -39,6 +39,14 @@ export default function Layout() {
               </NavLink>
             </>
           )}
+          {(tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD')) && (
+            <>
+              <span className="lateral__seccion">Origen</span>
+              <NavLink to="/productores" className="lateral__enlace">
+                <Icono nombre="hoja" /> Productores y fincas
+              </NavLink>
+            </>
+          )}
           {puedeVerEnvios && (
             <>
               <span className="lateral__seccion">Logística</span>
