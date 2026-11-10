@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { MODO_DEMO } from '../api/cliente.js'
+import { MODO_DEMO, despertarServidor } from '../api/cliente.js'
 import { useSesion } from '../auth/SesionContext.jsx'
 import Icono from '../components/Icono.jsx'
 import Marca from '../components/Marca.jsx'
@@ -31,6 +31,16 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [lento, setLento] = useState(false)
+
+  // El backend gratuito se duerme tras un rato sin uso: se despierta apenas se abre el login.
+  useEffect(() => despertarServidor(), [])
+
+  useEffect(() => {
+    if (!enviando) return setLento(false)
+    const t = setTimeout(() => setLento(true), 4000)
+    return () => clearTimeout(t)
+  }, [enviando])
 
   const enviar = async (e) => {
     e.preventDefault()
@@ -76,6 +86,12 @@ export default function Login() {
             <span>Contraseña</span>
             <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </label>
+
+          {lento && (
+            <div className="aviso aviso--info" role="status">
+              <span className="spinner" /> El servidor se está activando después de un rato sin uso. Puede tardar hasta un minuto, no cierres la página.
+            </div>
+          )}
 
           {error && <div className="aviso aviso--error" role="alert"><Icono nombre="alerta" tam={16} /> {error}</div>}
 

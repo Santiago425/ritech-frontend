@@ -56,14 +56,21 @@ export async function api(ruta, { metodo = 'GET', cuerpo } = {}) {
   if (sesion?.token) cabeceras.Authorization = `Bearer ${sesion.token}`
 
   let respuesta
+  const control = new AbortController()
+  const limite = setTimeout(() => control.abort(), 120000)
   try {
     respuesta = await fetch(`${API_URL}${ruta}`, {
       method: metodo,
       headers: cabeceras,
       body: cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
+      signal: control.signal,
     })
-  } catch {
-    throw new ErrorApi(0, 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+  } catch (e) {
+    throw new ErrorApi(0, e.name === 'AbortError'
+      ? 'El servidor tardó demasiado en responder. Intenta de nuevo en un momento.'
+      : 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+  } finally {
+    clearTimeout(limite)
   }
 
   if (respuesta.status === 204) return null
@@ -76,6 +83,12 @@ export async function api(ruta, { metodo = 'GET', cuerpo } = {}) {
     throw new ErrorApi(respuesta.status, mensaje, datos?.campos)
   }
   return datos
+}
+
+/** Despierta el backend (plan gratis de Render) sin esperar respuesta ni mostrar errores. */
+export function despertarServidor() {
+  if (MODO_DEMO) return
+  fetch(`${API_URL}/salud`, { mode: 'no-cors' }).catch(() => {})
 }
 
 export const authApi = {
