@@ -1,73 +1,151 @@
-# RiTech Exports — Frontend
+<div align="center">
 
-Interfaz web del sistema de gestión de exportaciones de café y cacao hacia la Unión Europea.
-Consume la API REST de [BACKEND-CACAO](https://github.com/walterjojoa/BACKEND-CACAO).
+# RiTech Exports · Frontend
 
-- React 19 · Vite 6 · React Router 7
-- Autenticación con JWT (`POST /api/auth/login`), sesión guardada en el navegador y cierre automático al expirar
-- Menú y permisos según el rol: Administrador, Gestor de exportaciones, Inspector de calidad y Cliente UE
-- Diseño adaptable a escritorio y celular
+**Plataforma web para gestionar exportaciones de café y cacao hacia la Unión Europea, con trazabilidad de origen a destino.**
+
+[![Demo en vivo](https://img.shields.io/badge/demo-en%20vivo-c8893b?style=for-the-badge)](https://ritech-frontend-atwu.onrender.com)
+![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?style=for-the-badge&logo=vite&logoColor=white)
+![Render](https://img.shields.io/badge/Render-desplegado-0f2a3d?style=for-the-badge&logo=render&logoColor=white)
+
+[Demo en vivo](https://ritech-frontend-atwu.onrender.com) · [Backend](https://github.com/walterjojoa/BACKEND-CACAO) · [Tablero Jira](https://cammb1004.atlassian.net/jira/software/projects/SCRUM/boards/1)
+
+![Detalle de un envío](docs/capturas/detalle-envio.png)
+
+</div>
+
+## Contenido
+
+- [Sobre el proyecto](#sobre-el-proyecto)
+- [Demo en vivo](#demo-en-vivo)
+- [Funcionalidades](#funcionalidades)
+- [Capturas](#capturas)
+- [Tecnologías](#tecnologías)
+- [Arquitectura](#arquitectura)
+- [Ejecutar en local](#ejecutar-en-local)
+- [Despliegue](#despliegue)
+- [Historias de usuario (Scrum)](#historias-de-usuario-scrum)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Equipo](#equipo)
+
+## Sobre el proyecto
+
+RiTech Exports es un sistema para empresas exportadoras colombianas de café y cacao que venden a importadores
+de la Unión Europea. Cubre todo el ciclo: registro de productores y fincas con geolocalización, lotes de
+exportación, inspección de calidad, certificados, validación del cumplimiento normativo europeo (EUDR),
+órdenes de exportación y logística del envío hasta su entrega.
+
+Este repositorio contiene la **interfaz web**. Se conecta a la API REST de
+[BACKEND-CACAO](https://github.com/walterjojoa/BACKEND-CACAO) (Java 17 · Spring Boot · MySQL) mediante
+autenticación JWT.
+
+El proyecto se desarrolla con **Scrum** en el curso de Calidad de Software de la Universidad Cooperativa de
+Colombia. El trabajo se organiza en Jira (proyecto `SCRUM`) y la documentación en Confluence.
+
+## Demo en vivo
+
+**https://ritech-frontend-atwu.onrender.com**
+
+Mientras el backend se publica en la nube, la demo funciona en **modo demo** con datos de ejemplo.
+Puedes entrar con cualquiera de estos usuarios y cualquier contraseña:
+
+| Rol | Correo |
+|---|---|
+| Cliente UE (importador) | `cliente@importadora-eu.com` |
+| Gestor de exportaciones | `gestor@ritech.co` |
+| Administrador | `admin@ritech.co` |
+| Inspector de calidad | `inspector@ritech.co` |
 
 ## Funcionalidades
 
-| Historia | Pantalla | Endpoints que usa |
-|---|---|---|
-| SCRUM-8 Iniciar sesión | `/login` | `POST /api/auth/login` |
-| SCRUM-30 Consultar estado y ubicación del envío | `/envios`, `/envios/:id` | `GET /api/envios?estado=`, `GET /api/envios/{id}` |
+### Inicio de sesión y roles
+- Inicio de sesión con correo y contraseña contra `POST /api/auth/login` (token JWT).
+- La sesión se guarda en el navegador y se cierra sola cuando el token expira.
+- El menú y las pantallas se adaptan al rol del usuario: Administrador, Gestor de exportaciones,
+  Inspector de calidad y Cliente UE.
 
-**Inicio:** resumen con indicadores (envíos totales, en tránsito, entregados, con incidencia) y próximos arribos.
+### Panel de inicio
+- Saludo personalizado y resumen de la operación.
+- Indicadores: envíos totales, en tránsito, entregados y con incidencia.
+- Próximos arribos ordenados por fecha, con aviso de retraso.
 
-**Envíos:** listado con filtro por estado y búsqueda por contenedor, booking o puerto. Un Cliente UE solo ve
-los envíos de sus propias órdenes (lo filtra el backend).
+### Envíos (SCRUM-30: consultar estado y ubicación del envío)
+- Listado con filtro por estado (Programado, En puerto, En tránsito, Arribado, Entregado, Incidencia)
+  y búsqueda por contenedor, booking o puerto.
+- Un Cliente UE solo ve los envíos de sus propias órdenes.
+- Detalle de cada envío:
+  - Ruta origen → destino con la **ubicación del último reporte**.
+  - Avance por etapas del envío.
+  - **Alerta destacada** cuando hay una incidencia y **aviso de retraso** frente al arribo estimado.
+  - Datos del envío: orden, transportista, contenedor ISO 6346, booking/BL, fechas de zarpe y arribo.
+  - **Bitácora completa** de eventos de seguimiento.
 
-**Detalle del envío:** ruta origen → destino con la ubicación del último reporte, progreso por etapas
-(Programado, En puerto, En tránsito, Arribado, Entregado), aviso destacado si hay una incidencia, alerta de
-retraso frente al arribo estimado, datos del envío (orden, transportista, contenedor ISO 6346, booking/BL) y
-bitácora completa de seguimiento.
+### Calidad de la interfaz
+- Diseño adaptable a escritorio, tableta y celular.
+- Estados de carga, vacío y error en cada pantalla, con opción de reintentar.
+- Los mensajes de error del backend (validaciones, reglas de negocio, permisos) se muestran tal cual al usuario.
+- Código revisado con ESLint.
+
+## Capturas
+
+| Inicio de sesión | Panel de inicio |
+|---|---|
+| ![Login](docs/capturas/login.png) | ![Inicio](docs/capturas/inicio.png) |
+
+| Listado de envíos | Envío con incidencia (celular) |
+|---|---|
+| ![Envíos](docs/capturas/envios.png) | <img src="docs/capturas/celular-incidencia.png" alt="Envío con incidencia en celular" width="260"> |
+
+## Tecnologías
+
+| Área | Herramienta |
+|---|---|
+| Interfaz | React 19 |
+| Empaquetado y servidor de desarrollo | Vite 6 |
+| Navegación | React Router 7 |
+| Estilos | CSS propio con variables de diseño (sin librerías externas) |
+| Calidad de código | ESLint |
+| Despliegue | Render (sitio estático) |
+| Backend | Java 17 · Spring Boot 3.5 · Spring Security (JWT) · MySQL 8 |
+
+## Arquitectura
+
+```
+ Navegador ──► Frontend React (Render) ──HTTPS + JWT──► API Spring Boot ──► MySQL 8
+                                                       (BACKEND-CACAO)     db_ritech_exports
+```
+
+- El frontend no guarda reglas de negocio: las validaciones y permisos viven en el backend y la base de datos.
+- Cada petición envía el token en la cabecera `Authorization: Bearer …`.
+- Si el backend responde 401, la sesión se cierra y se vuelve al inicio de sesión.
 
 ## Ejecutar en local
 
-Requisitos: Node.js 18 o superior y el backend corriendo en `http://localhost:8080`.
+**Requisitos:** Node.js 18 o superior. Para datos reales, el backend corriendo en `http://localhost:8080`
+(ver su [README](https://github.com/walterjojoa/BACKEND-CACAO#ejecutar-en-local)).
 
 ```bash
+git clone https://github.com/Santiago425/ritech-frontend.git
+cd ritech-frontend
 npm install
 cp .env.example .env     # en Windows: copy .env.example .env
 npm run dev
 ```
 
-Abrir `http://localhost:5173` e ingresar con un usuario semilla del backend, por ejemplo
-`cliente@importadora-eu.com` o `gestor@ritech.co`.
+Abre `http://localhost:5173` e ingresa con un usuario semilla del backend.
+El backend ya acepta peticiones desde `http://localhost:5173` (variable `ALLOWED_ORIGINS`).
 
-El backend ya permite peticiones desde `http://localhost:5173` (variable `ALLOWED_ORIGINS`).
+**Sin backend:** pon `VITE_MODO_DEMO=true` en `.env` y la aplicación usará los datos de ejemplo.
 
-### Modo demo (sin backend)
-
-Para presentar o revisar la interfaz sin levantar MySQL ni el backend, poner en `.env`:
-
-```
-VITE_MODO_DEMO=true
-```
-
-Cualquier correo semilla funciona con cualquier contraseña y se muestran envíos de ejemplo.
-
-## Despliegue
-
-El sitio se publica como sitio estático en Render con la configuración de `render.yaml`
-(compila con `npm run build`, publica `dist/` y redirige todas las rutas a `index.html`).
-Cada push a `main` se despliega solo.
-
-Mientras el backend no esté en la nube, el despliegue usa el modo demo. Cuando el backend tenga URL pública:
-cambiar en `render.yaml` `VITE_API_URL` por esa URL y `VITE_MODO_DEMO` por `false`, y agregar la URL del
-frontend a `ALLOWED_ORIGINS` del backend.
-
-## Variables de entorno
+### Variables de entorno
 
 | Variable | Para qué | Por defecto |
 |---|---|---|
 | `VITE_API_URL` | URL base del backend | `http://localhost:8080` |
 | `VITE_MODO_DEMO` | Usar datos de ejemplo sin backend | `false` |
 
-## Scripts
+### Scripts
 
 | Comando | Qué hace |
 |---|---|
@@ -76,13 +154,62 @@ frontend a `ALLOWED_ORIGINS` del backend.
 | `npm run preview` | Sirve la compilación de `dist/` |
 | `npm run lint` | Revisa el código con ESLint |
 
-## Estructura
+## Despliegue
+
+El sitio está publicado en **Render** como sitio estático, definido en [`render.yaml`](render.yaml):
+
+- Compila con `npm ci && npm run build` y publica la carpeta `dist/`.
+- Todas las rutas se redirigen a `index.html` para que funcione la navegación de React Router.
+- Cada push a `main` se despliega automáticamente.
+- Al ser sitio estático, no se suspende por inactividad.
+
+**Conectar con el backend en la nube:** cuando el backend tenga URL pública, cambiar en `render.yaml`
+`VITE_API_URL` por esa URL y `VITE_MODO_DEMO` por `"false"`, y agregar
+`https://ritech-frontend-atwu.onrender.com` a `ALLOWED_ORIGINS` del backend.
+
+## Historias de usuario (Scrum)
+
+Sprint 4: **Logística, reportes y cierre**.
+
+| Historia | Descripción | Estado en el frontend |
+|---|---|---|
+| SCRUM-8 | Iniciar sesión | ✅ Hecho |
+| SCRUM-30 | Como cliente de la UE quiero consultar el estado y la ubicación de mi envío | ✅ Hecho |
+| SCRUM-29 | Como gestor quiero registrar eventos de seguimiento del envío | ⏳ Pendiente |
+| SCRUM-31 | Como administrador quiero un tablero con toneladas exportadas y porcentaje de rechazo | ⏳ Pendiente |
+| SCRUM-32 | Como administrador quiero exportar reportes de cumplimiento normativo a hoja de cálculo | ⏳ Pendiente |
+| SCRUM-66 | Manual de usuario por rol (Confluence) | ⏳ Pendiente |
+
+## Estructura del proyecto
 
 ```
-src/
-  api/          cliente HTTP, manejo de errores del backend y datos del modo demo
-  auth/         sesión, rol y permisos del usuario
-  components/   menú, ruta del envío, etapas, bitácora, estados de carga
-  pages/        login, inicio, envíos y detalle del envío
-  styles/       estilos globales
+ritech-frontend/
+├── docs/capturas/        capturas de pantalla
+├── public/               ícono del sitio
+├── src/
+│   ├── api/              cliente HTTP, manejo de errores y datos del modo demo
+│   ├── auth/             sesión, rol y permisos del usuario
+│   ├── components/       menú, ruta del envío, etapas, bitácora, estados de carga
+│   ├── pages/            login, inicio, envíos y detalle del envío
+│   ├── styles/           estilos globales y diseño adaptable
+│   ├── hooks.js          carga de datos desde la API
+│   └── utils.js          estados del envío, fechas y cálculo de retrasos
+├── render.yaml           configuración de despliegue en Render
+└── .env.example          variables de entorno de ejemplo
 ```
+
+## Equipo
+
+| Integrante | Rol |
+|---|---|
+| Santiago Alejandro Campoverde Obando | Frontend |
+| Walter René Jojoa | Backend y frontend |
+| Manuel Alejandro Villarreal | Analista |
+| Camilo Bolaños | Pruebas y base de datos |
+| Felipe Alejandro Cerón Cifuentes | Despliegue y revisión técnica |
+
+---
+
+<div align="center">
+Universidad Cooperativa de Colombia · Calidad de Software · 2026
+</div>
