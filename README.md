@@ -50,6 +50,16 @@ VITE_MODO_DEMO=true
 
 Cualquier correo semilla funciona con cualquier contraseña y se muestran envíos de ejemplo.
 
+## Despliegue
+
+El sitio se publica como sitio estático en Render con la configuración de `render.yaml`
+(compila con `npm run build`, publica `dist/` y redirige todas las rutas a `index.html`).
+Cada push a `main` se despliega solo.
+
+Mientras el backend no esté en la nube, el despliegue usa el modo demo. Cuando el backend tenga URL pública:
+cambiar en `render.yaml` `VITE_API_URL` por esa URL y `VITE_MODO_DEMO` por `false`, y agregar la URL del
+frontend a `ALLOWED_ORIGINS` del backend.
+
 ## Variables de entorno
 
 | Variable | Para qué | Por defecto |
