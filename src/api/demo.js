@@ -574,7 +574,21 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
   const finca = camino.match(/^\/api\/fincas\/(\d+)$/)
   if (finca && metodo === 'PUT') return guardarFincaDemo(Number(finca[1]), null, cuerpo)
 
-  if (camino === '/api/productos') return PRODUCTOS
+  if (camino === '/api/productos' && metodo === 'GET') return PRODUCTOS
+  const prod = camino.match(/^\/api\/productos(?:\/(\d+))?$/)
+  if (prod) {
+    const id = prod[1] ? Number(prod[1]) : null
+    if (metodo === 'DELETE') {
+      if (LOTES.some((l) => l.idProducto === id)) throw errorDemo(409, 'No se puede eliminar: el producto tiene lotes registrados.')
+      PRODUCTOS.splice(PRODUCTOS.findIndex((x) => x.idProducto === id), 1)
+      return null
+    }
+    const datos = { tipo: cuerpo.tipo, nombreComercial: cuerpo.nombreComercial.trim(), variedad: cuerpo.variedad || null, codigoHs: cuerpo.codigoHs, unidadMedida: cuerpo.unidadMedida || 'KG' }
+    if (id) return Object.assign(PRODUCTOS.find((x) => x.idProducto === id), datos)
+    const nuevo = { idProducto: Math.max(...PRODUCTOS.map((x) => x.idProducto)) + 1, ...datos }
+    PRODUCTOS.push(nuevo)
+    return nuevo
+  }
   if (camino === '/api/lotes' && metodo === 'GET') {
     const q = new URLSearchParams(consulta)
     return LOTES.filter((l) => (!q.get('estado') || l.estadoLote === q.get('estado')) && (!q.get('idProducto') || l.idProducto === Number(q.get('idProducto'))))

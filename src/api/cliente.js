@@ -210,3 +210,10 @@ export const cumplimientoApi = {
   validar: (idLote) => api(`/api/lotes/${idLote}/validar`, { metodo: 'POST' }),
   dictamen: (idLote) => api(`/api/lotes/${idLote}/dictamen`),
 }
+
+export const productosApi = {
+  listar: () => api('/api/productos'),
+  crear: (p) => api('/api/productos', { metodo: 'POST', cuerpo: p }),
+  editar: (id, p) => api(`/api/productos/${id}`, { metodo: 'PUT', cuerpo: p }),
+  eliminar: (id) => api(`/api/productos/${id}`, { metodo: 'DELETE' }),
+}

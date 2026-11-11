@@ -42,12 +42,17 @@ export default function Layout() {
               <Icono nombre="documento" /> {esCliente ? 'Mis órdenes' : 'Órdenes'}
             </NavLink>
           )}
-          {(tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD') || tienePermiso('LOTES_CONSULTAR')) && (
+          {(tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD') || tienePermiso('LOTES_CONSULTAR') || tienePermiso('PRODUCTOS_GESTIONAR')) && (
             <span className="lateral__seccion">{tienePermiso('INSPECCION_REGISTRAR') ? 'Calidad' : 'Origen'}</span>
           )}
           {(tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD')) && (
             <NavLink to="/productores" className="lateral__enlace">
               <Icono nombre="hoja" /> Productores y fincas
+            </NavLink>
+          )}
+          {tienePermiso('PRODUCTOS_GESTIONAR') && (
+            <NavLink to="/productos" className="lateral__enlace">
+              <Icono nombre="cafe" /> Productos
             </NavLink>
           )}
           {tienePermiso('LOTES_CONSULTAR') && (

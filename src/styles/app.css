@@ -732,3 +732,4 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .pestanas { overflow-x: auto; }
   .pestanas button { white-space: nowrap; flex-shrink: 0; }
 }
+.tabla td.celda-accion { white-space: nowrap; }
