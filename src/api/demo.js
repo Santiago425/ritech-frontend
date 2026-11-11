@@ -14,12 +14,42 @@ const fechaHora = (n, h = 9) => {
   return d.toISOString().slice(0, 19)
 }
 
+const CATALOGO_PERMISOS = [
+  ['USUARIOS_GESTIONAR', 'SEGURIDAD', 'Crear, editar e inactivar usuarios y asignar roles'],
+  ['AUDITORIA_CONSULTAR', 'SEGURIDAD', 'Consultar el rastro de auditoria del sistema'],
+  ['REGLAS_ADMINISTRAR', 'NORMATIVA', 'Crear, editar, activar y desactivar reglas normativas UE'],
+  ['CLIENTES_GESTIONAR', 'COMERCIAL', 'Crear y editar clientes importadores de la UE'],
+  ['CLIENTES_CONSULTAR', 'COMERCIAL', 'Consultar y filtrar el listado de clientes'],
+  ['PRODUCTOS_GESTIONAR', 'MAESTROS', 'Administrar el catalogo de productos y codigos HS'],
+  ['PRODUCTORES_GESTIONAR', 'MAESTROS', 'Registrar productores y fincas con geolocalizacion'],
+  ['LOTES_CREAR', 'LOTES', 'Registrar lotes de exportacion'],
+  ['LOTES_TRAZABILIDAD', 'LOTES', 'Asociar fincas de origen y cerrar la trazabilidad'],
+  ['LOTES_CONSULTAR', 'LOTES', 'Consultar lotes y su trazabilidad'],
+  ['INSPECCION_REGISTRAR', 'CALIDAD', 'Registrar inspecciones y emitir dictamen'],
+  ['CERTIFICADOS_CARGAR', 'CALIDAD', 'Cargar certificaciones del lote con su vigencia'],
+  ['VALIDACION_EJECUTAR', 'NORMATIVA', 'Ejecutar el motor de validacion normativa sobre un lote'],
+  ['ORDENES_GESTIONAR', 'COMERCIAL', 'Crear ordenes de exportacion y asignar lotes aprobados'],
+].map(([codigo, modulo, descripcion], i) => ({ idPermiso: i + 1, codigo, modulo, descripcion }))
+
+// Misma asignación que el script de la base de datos (roles_permisos).
 const PERMISOS = {
-  ADMINISTRADOR: ['AUDITORIA_CONSULTAR', 'CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_TRAZABILIDAD', 'ORDENES_GESTIONAR', 'PRODUCTORES_GESTIONAR', 'USUARIOS_GESTIONAR'],
-  GESTOR_EXPORTACIONES: ['CLIENTES_CONSULTAR', 'CLIENTES_GESTIONAR', 'LOTES_CONSULTAR', 'LOTES_CREAR', 'LOTES_TRAZABILIDAD', 'ORDENES_GESTIONAR', 'PRODUCTORES_GESTIONAR'],
-  INSPECTOR_CALIDAD: ['CERTIFICADOS_CARGAR', 'INSPECCION_REGISTRAR', 'LOTES_CONSULTAR'],
+  ADMINISTRADOR: CATALOGO_PERMISOS.map((p) => p.codigo),
+  GESTOR_EXPORTACIONES: ['CLIENTES_GESTIONAR', 'CLIENTES_CONSULTAR', 'PRODUCTOS_GESTIONAR', 'PRODUCTORES_GESTIONAR', 'LOTES_CREAR', 'LOTES_TRAZABILIDAD', 'LOTES_CONSULTAR', 'VALIDACION_EJECUTAR', 'ORDENES_GESTIONAR'],
+  INSPECTOR_CALIDAD: ['LOTES_CONSULTAR', 'INSPECCION_REGISTRAR', 'CERTIFICADOS_CARGAR'],
   CLIENTE_UE: ['LOTES_CONSULTAR'],
 }
+
+const ROLES = [
+  ['ADMINISTRADOR', 'Administra usuarios, roles, permisos y reglas normativas; consulta auditoria'],
+  ['GESTOR_EXPORTACIONES', 'Registra clientes, productores, fincas, lotes y ordenes de exportacion'],
+  ['INSPECTOR_CALIDAD', 'Registra inspecciones, emite dictamenes y carga certificaciones'],
+  ['CLIENTE_UE', 'Importador europeo con acceso de consulta a sus propias ordenes'],
+].map(([nombreRol, descripcion], i) => ({
+  idRol: i + 1,
+  nombreRol,
+  descripcion,
+  permisos: CATALOGO_PERMISOS.filter((p) => PERMISOS[nombreRol].includes(p.codigo)),
+}))
 
 const USUARIOS = {
   'admin@ritech.co': { idUsuario: 1, nombreCompleto: 'Felipe Ceron', rol: 'ADMINISTRADOR' },
@@ -136,6 +166,47 @@ const ORIGEN = {
   4: [[3, 4, 100, 6000]],
 }
 
+const CUENTAS = [
+  { idUsuario: 1, rol: 'ADMINISTRADOR', idCliente: null, nombreCompleto: 'Felipe Ceron', email: 'admin@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(0, 8) },
+  { idUsuario: 2, rol: 'GESTOR_EXPORTACIONES', idCliente: null, nombreCompleto: 'Manuel Alejandro Villarreal', email: 'gestor@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(-1, 15) },
+  { idUsuario: 3, rol: 'INSPECTOR_CALIDAD', idCliente: null, nombreCompleto: 'Camilo Bolaños', email: 'inspector@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(-2, 10) },
+  { idUsuario: 4, rol: 'CLIENTE_UE', idCliente: 1, nombreCompleto: 'Kaffeehaus Import GmbH', email: 'cliente@importadora-eu.com', estado: 'ACTIVO', ultimoAcceso: fechaHora(-3, 11) },
+  { idUsuario: 5, rol: 'INSPECTOR_CALIDAD', idCliente: null, nombreCompleto: 'Laura Muñoz Ortega', email: 'lmunoz@ritech.co', estado: 'INACTIVO', ultimoAcceso: fechaHora(-60, 9) },
+]
+const vistaUsuario = (u) => ({ ...u, rol: ROLES.find((r) => r.nombreRol === u.rol) })
+
+const AUDITORIA = [
+  [-1, 2, 'lotes_exportacion', '3', 'INSERT', null, { codigo_lote: 'LT-2026-0003', estado_lote: 'REGISTRADO', peso_neto_kg: 8500 }],
+  [-2, 3, 'inspecciones_calidad', '2', 'INSERT', null, { id_lote: 4, resultado: 'RECHAZADO', humedad_porcentaje: 9.8 }],
+  [-2, 3, 'lotes_exportacion', '4', 'UPDATE', { estado_lote: 'EN_INSPECCION' }, { estado_lote: 'RECHAZADO' }],
+  [-4, 2, 'clientes_ue', '2', 'UPDATE', { ciudad: 'Rotterdam', estado: 'ACTIVO' }, { ciudad: 'Róterdam', estado: 'ACTIVO' }],
+  [-6, 2, 'clientes_ue', '3', 'INSERT', null, { razon_social: 'Cacao Bleu SAS', numero_eori: 'FR123456789012', id_pais: 10, ciudad: 'Burdeos' }],
+  [-9, 1, 'clientes_ue', '5', 'DELETE', { razon_social: 'Prueba QA', numero_eori: 'ES000000000000' }, null],
+  [-15, 3, 'inspecciones_calidad', '1', 'INSERT', null, { id_lote: 1, resultado: 'APROBADO', puntaje_taza: 84.5 }],
+  [-15, 3, 'lotes_exportacion', '1', 'UPDATE', { estado_lote: 'EN_INSPECCION' }, { estado_lote: 'APROBADO' }],
+].map(([d, idUsuario, tablaAfectada, idRegistro, accion, valorAnterior, valorNuevo], i) => ({
+  idAuditoria: 100 - i, idUsuario, tablaAfectada, idRegistro, accion, valorAnterior, valorNuevo,
+  fechaHora: fechaHora(d, 10 + (i % 6)), ipOrigen: '190.85.12.' + (20 + idUsuario),
+}))
+
+function guardarUsuarioDemo(id, u) {
+  const email = u.email.trim().toLowerCase()
+  if (CUENTAS.some((x) => x.email === email && x.idUsuario !== id)) throw errorDemo(409, 'Ya existe un usuario con ese correo.')
+  if (!ROLES.some((r) => r.nombreRol === u.rol)) throw errorDemo(400, `El rol '${u.rol}' no existe.`)
+  const idCliente = u.rol === 'CLIENTE_UE' ? u.idCliente : null
+  if (u.rol === 'CLIENTE_UE' && !idCliente) throw errorDemo(400, 'Un usuario con rol CLIENTE_UE debe indicar idCliente.')
+  if (idCliente && CUENTAS.some((x) => x.idCliente === idCliente && x.idUsuario !== id)) throw errorDemo(409, 'Ese cliente ya tiene una cuenta de acceso.')
+  const datos = { nombreCompleto: u.nombreCompleto.trim(), email, rol: u.rol, idCliente }
+  if (id) {
+    const actual = CUENTAS.find((x) => x.idUsuario === id)
+    if (id === 1 && u.rol !== actual.rol) throw errorDemo(400, 'No puede cambiar su propio rol.')
+    return vistaUsuario(Object.assign(actual, datos))
+  }
+  const nuevo = { idUsuario: Math.max(...CUENTAS.map((x) => x.idUsuario)) + 1, ...datos, estado: 'ACTIVO', ultimoAcceso: null }
+  CUENTAS.push(nuevo)
+  return vistaUsuario(nuevo)
+}
+
 const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
 
 function guardarClienteDemo(id, c) {
@@ -191,6 +262,29 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     }
     const usuario = { ...base, email: cuerpo.email.trim().toLowerCase(), permisos: PERMISOS[base.rol] }
     return { token: 'demo', tipo: 'Bearer', expiraEnSegundos: 8 * 3600, usuario }
+  }
+
+  if (camino === '/api/roles') return ROLES
+  if (camino === '/api/usuarios' && metodo === 'GET') return [...CUENTAS].sort((a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto)).map(vistaUsuario)
+  if (camino === '/api/usuarios' && metodo === 'POST') return guardarUsuarioDemo(null, cuerpo)
+  const cuenta = camino.match(/^\/api\/usuarios\/(\d+)(\/estado)?$/)
+  if (cuenta && metodo === 'PUT') return guardarUsuarioDemo(Number(cuenta[1]), cuerpo)
+  if (cuenta && metodo === 'PATCH') {
+    if (Number(cuenta[1]) === 1 && cuerpo.estado !== 'ACTIVO') throw errorDemo(400, 'No puede inactivar ni bloquear su propia cuenta.')
+    const u = CUENTAS.find((x) => x.idUsuario === Number(cuenta[1]))
+    u.estado = cuerpo.estado
+    return vistaUsuario(u)
+  }
+  if (camino === '/api/auditoria') {
+    const q = new URLSearchParams(consulta)
+    const desde = q.get('desde'), hasta = q.get('hasta')
+    const filas = AUDITORIA.filter((a) =>
+      (!q.get('tabla') || a.tablaAfectada === q.get('tabla')) &&
+      (!q.get('idUsuario') || a.idUsuario === Number(q.get('idUsuario'))) &&
+      (!desde || a.fechaHora.slice(0, 10) >= desde) &&
+      (!hasta || a.fechaHora.slice(0, 10) <= hasta))
+    const tamano = Number(q.get('tamano') ?? 50), pagina = Number(q.get('pagina') ?? 0)
+    return { content: filas.slice(pagina * tamano, (pagina + 1) * tamano), totalElements: filas.length, totalPages: Math.max(1, Math.ceil(filas.length / tamano)), number: pagina, size: tamano }
   }
 
   if (camino === '/api/productores' && metodo === 'GET') return [...PRODUCTORES].sort((a, b) => a.nombre.localeCompare(b.nombre))

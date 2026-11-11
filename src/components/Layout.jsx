@@ -60,6 +60,19 @@ export default function Layout() {
               </NavLink>
             </>
           )}
+          {(tienePermiso('USUARIOS_GESTIONAR') || tienePermiso('AUDITORIA_CONSULTAR')) && (
+            <span className="lateral__seccion">Seguridad</span>
+          )}
+          {tienePermiso('USUARIOS_GESTIONAR') && (
+            <NavLink to="/usuarios" className="lateral__enlace">
+              <Icono nombre="llave" /> Usuarios y roles
+            </NavLink>
+          )}
+          {tienePermiso('AUDITORIA_CONSULTAR') && (
+            <NavLink to="/auditoria" className="lateral__enlace">
+              <Icono nombre="historial" /> Auditoría
+            </NavLink>
+          )}
         </nav>
         <div className="lateral__pie">
           <p>Café y cacao trazable hacia la Unión Europea</p>

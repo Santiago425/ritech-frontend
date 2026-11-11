@@ -562,3 +562,51 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .paso:not(:last-child)::after { top: 13px; left: calc(50% + 16px); right: calc(-50% + 16px); }
   .datos { grid-template-columns: 1fr; }
 }
+
+/* ---------- Seguridad: usuarios, roles y auditoría ---------- */
+.pestanas__num { font-size: 0.75rem; background: var(--neutro-suave); color: var(--texto-suave); border-radius: 999px; padding: 1px 8px; }
+.celda-persona { display: flex; align-items: center; gap: 10px; }
+.avatar.avatar--chico { width: 32px; height: 32px; font-size: 0.74rem; order: 0; flex-shrink: 0; }
+.avatar--apagado { background: var(--neutro-suave); color: var(--texto-suave); }
+.celda-accion .boton + .boton { margin-left: 4px; }
+.opciones-rol { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opcion-rol {
+  position: relative; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; cursor: pointer;
+  border: 1px solid var(--borde); border-radius: 10px; transition: border-color 0.12s, background 0.12s;
+}
+.opcion-rol input { position: absolute; opacity: 0; pointer-events: none; }
+.opcion-rol strong { font-size: 0.9rem; }
+.opcion-rol span { font-size: 0.78rem; color: var(--texto-suave); }
+.opcion-rol:hover { border-color: #c5cfdb; }
+.opcion-rol:focus-within { box-shadow: 0 0 0 3px rgba(22, 58, 84, 0.15); }
+.opcion-rol--activa { border-color: var(--azul-800); background: var(--primario-suave); }
+.opcion-rol--bloqueada { opacity: 0.45; cursor: not-allowed; }
+.casilla { display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--texto-suave); cursor: pointer; }
+.rejilla-roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.tarjeta-rol h3 { margin: 0 0 6px; font-size: 1rem; }
+.tarjeta-rol p { margin: 0 0 14px; font-size: 0.85rem; min-height: 2.6em; }
+.tarjeta-rol__datos { display: flex; gap: 16px; font-size: 0.85rem; color: var(--texto-suave); }
+.tarjeta-rol__datos strong { color: var(--texto); font-size: 1.05rem; }
+.matriz__rol, .matriz__celda { text-align: center; }
+.matriz td:nth-child(n) { white-space: normal; }
+.matriz__modulo td { background: #f8fafc; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-suave); cursor: default; }
+.matriz__si { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--exito-suave); color: var(--exito); }
+.matriz__no { color: #cbd5e1; }
+.nota-pie { font-size: 0.82rem; margin: 14px 0 0; }
+.filtro-fecha { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--texto-suave); }
+.tabla td.celda-resumen { white-space: normal; max-width: 420px; font-size: 0.86rem; }
+.tabla__fila--abierta { background: #f8fafc; }
+.tabla__detalle { cursor: default !important; }
+.tabla__detalle:hover { background: none !important; }
+.tabla__detalle > td { background: #f8fafc; padding: 4px 16px 16px !important; }
+.flecha-detalle { display: inline-flex; transform: rotate(-90deg); transition: transform 0.15s; }
+.flecha-detalle--abierta { transform: rotate(90deg); }
+.diferencias { width: 100%; border-collapse: collapse; font-size: 0.84rem; background: #fff; border: 1px solid var(--borde); border-radius: 8px; }
+.diferencias th, .diferencias td { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--borde); white-space: normal !important; }
+.diferencias th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--texto-suave); }
+.diferencias--cambio .diferencias__antes { color: var(--alerta); text-decoration: line-through; }
+.diferencias--cambio .diferencias__despues { color: var(--exito); font-weight: 600; }
+@media (max-width: 640px) {
+  .opciones-rol { grid-template-columns: 1fr; }
+  .filtro-fecha { width: 100%; }
+}

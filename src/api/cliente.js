@@ -135,3 +135,15 @@ export const lotesApi = {
   inspeccionar: (id, i) => api(`/api/lotes/${id}/inspecciones`, { metodo: 'POST', cuerpo: i }),
   trazabilidad: (id) => api(`/api/lotes/${id}/trazabilidad`),
 }
+
+export const usuariosApi = {
+  listar: () => api('/api/usuarios'),
+  crear: (u) => api('/api/usuarios', { metodo: 'POST', cuerpo: u }),
+  editar: (id, u) => api(`/api/usuarios/${id}`, { metodo: 'PUT', cuerpo: u }),
+  cambiarEstado: (id, estado) => api(`/api/usuarios/${id}/estado`, { metodo: 'PATCH', cuerpo: { estado } }),
+  roles: () => api('/api/roles'),
+}
+
+export const auditoriaApi = {
+  listar: (filtros = {}) => api(`/api/auditoria${consulta(filtros)}`),
+}

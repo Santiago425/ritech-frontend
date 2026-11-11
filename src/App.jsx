@@ -11,6 +11,8 @@ import Productores from './pages/Productores.jsx'
 import ProductorDetalle from './pages/ProductorDetalle.jsx'
 import Lotes from './pages/Lotes.jsx'
 import LoteDetalle from './pages/LoteDetalle.jsx'
+import Usuarios from './pages/Usuarios.jsx'
+import Auditoria from './pages/Auditoria.jsx'
 
 function Protegida({ children, permitido = true }) {
   const { usuario } = useSesion()
@@ -36,6 +38,8 @@ export default function App() {
         <Route path="productores/:id" element={<Protegida permitido={puedeVerProductores}><ProductorDetalle /></Protegida>} />
         <Route path="lotes" element={<Protegida permitido={tienePermiso('LOTES_CONSULTAR')}><Lotes /></Protegida>} />
         <Route path="lotes/:id" element={<Protegida permitido={tienePermiso('LOTES_CONSULTAR')}><LoteDetalle /></Protegida>} />
+        <Route path="usuarios" element={<Protegida permitido={tienePermiso('USUARIOS_GESTIONAR')}><Usuarios /></Protegida>} />
+        <Route path="auditoria" element={<Protegida permitido={tienePermiso('AUDITORIA_CONSULTAR')}><Auditoria /></Protegida>} />
         <Route path="*" element={<NoEncontrado />} />
       </Route>
     </Routes>
