@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { lotesApi, productoresApi } from '../api/cliente.js'
 import AporteForm from '../components/AporteForm.jsx'
+import CumplimientoLote from '../components/CumplimientoLote.jsx'
 import LoteForm from '../components/LoteForm.jsx'
 import Modal from '../components/Modal.jsx'
 import { useSesion } from '../auth/SesionContext.jsx'
@@ -365,9 +366,12 @@ export default function LoteDetalle() {
         <button role="tab" aria-selected={pestana === 'calidad'} className={pestana === 'calidad' ? 'activa' : ''} onClick={() => setParams({ ver: 'calidad' })}>
           <Icono nombre="check" tam={16} /> Calidad
         </button>
+        <button role="tab" aria-selected={pestana === 'cumplimiento'} className={pestana === 'cumplimiento' ? 'activa' : ''} onClick={() => setParams({ ver: 'cumplimiento' })}>
+          <Icono nombre="documento" tam={16} /> Cumplimiento UE
+        </button>
       </div>
 
-      {pestana === 'calidad' ? <Inspecciones lote={l} esCafe={esCafe} onEstado={setEstadoLocal} /> : <Trazabilidad lote={l} />}
+      {pestana === 'calidad' ? <Inspecciones lote={l} esCafe={esCafe} onEstado={setEstadoLocal} /> : pestana === 'cumplimiento' ? <CumplimientoLote lote={l} /> : <Trazabilidad lote={l} />}
     </div>
   )
 }

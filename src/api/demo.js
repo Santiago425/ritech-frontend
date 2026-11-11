@@ -162,6 +162,11 @@ const LOTES = [
 const INSPECCIONES = [
   { idInspeccion: 1, idLote: 1, idUsuarioInspector: 3, fechaInspeccion: fecha(-70), humedadPorcentaje: 11.2, defectosPor300g: 4, puntajeTaza: 84.5, ocratoxinaPpb: 1.1, aflatoxinasPpb: 0.4, resultado: 'APROBADO', observaciones: 'Grano uniforme, perfil achocolatado' },
   { idInspeccion: 2, idLote: 4, idUsuarioInspector: 3, fechaInspeccion: fecha(-30), humedadPorcentaje: 9.8, defectosPor300g: 18, puntajeTaza: null, ocratoxinaPpb: 3.4, aflatoxinasPpb: 2.9, resultado: 'RECHAZADO', observaciones: 'Moho visible en el 6% de la muestra y fermentación incompleta' },
+  { idInspeccion: 3, idLote: 5, idUsuarioInspector: 3, fechaInspeccion: fecha(-50), humedadPorcentaje: 11.0, defectosPor300g: 3, puntajeTaza: 85.25, ocratoxinaPpb: 0.9, aflatoxinasPpb: 0.2, resultado: 'APROBADO', observaciones: 'Taza limpia, acidez brillante' },
+  { idInspeccion: 4, idLote: 6, idUsuarioInspector: 3, fechaInspeccion: fecha(-60), humedadPorcentaje: 7.1, defectosPor300g: 5, puntajeTaza: null, ocratoxinaPpb: 0.6, aflatoxinasPpb: 1.8, resultado: 'APROBADO', observaciones: 'Fermentación completa, corte 92% marrón' },
+  { idInspeccion: 5, idLote: 7, idUsuarioInspector: 3, fechaInspeccion: fecha(-85), humedadPorcentaje: 11.4, defectosPor300g: 6, puntajeTaza: 83.0, ocratoxinaPpb: 1.4, aflatoxinasPpb: 0.3, resultado: 'APROBADO', observaciones: null },
+  { idInspeccion: 6, idLote: 8, idUsuarioInspector: 3, fechaInspeccion: fecha(-18), humedadPorcentaje: 10.9, defectosPor300g: 4, puntajeTaza: 84.0, ocratoxinaPpb: 1.2, aflatoxinasPpb: 0.3, resultado: 'APROBADO', observaciones: 'Perfil panela y cítricos' },
+  { idInspeccion: 7, idLote: 9, idUsuarioInspector: 3, fechaInspeccion: fecha(-12), humedadPorcentaje: 7.4, defectosPor300g: 7, puntajeTaza: null, ocratoxinaPpb: 0.8, aflatoxinasPpb: 2.4, resultado: 'APROBADO', observaciones: null },
 ]
 
 const ORIGEN = {
@@ -270,6 +275,92 @@ function ordenEnBorrador(id) {
   const o = ordenDemo(id)
   if (o.estadoOrden !== 'BORRADOR') throw errorDemo(400, `Solo se modifica una orden en BORRADOR (esta ${o.estadoOrden}).`)
   return o
+}
+
+const CERTIFICACIONES = [
+  ['FITOSANITARIO', 'Certificado Fitosanitario', 'ICA - Instituto Colombiano Agropecuario', true],
+  ['ORIGEN', 'Certificado de Origen', 'Camara de Comercio', true],
+  ['CALIDAD_FNC', 'Certificado de Calidad del Cafe', 'Federacion Nacional de Cafeteros', false],
+  ['ORGANICO', 'Certificacion Organica UE', 'Organismo de control acreditado', false],
+  ['FAIRTRADE', 'Certificacion de Comercio Justo', 'Fairtrade International', false],
+  ['GLOBALGAP', 'Certificacion GLOBALG.A.P.', 'Organismo certificador acreditado', false],
+].map(([codigo, nombre, entidadEmisora, obligatoriaUe], i) => ({ idCertificacion: i + 1, codigo, nombre, entidadEmisora, obligatoriaUe }))
+
+const CERTIFICADOS = [
+  [1, 1, 'ICA-FIT-2026-08812', -60, 12], [1, 2, 'CCC-ORI-2026-1102', -60, 120], [1, 3, 'FNC-CAL-55120', -70, 25],
+  [5, 1, 'ICA-FIT-2026-07455', -50, 40], [5, 2, 'CCC-ORI-2026-0988', -50, 200],
+  [6, 1, 'ICA-FIT-2026-07121', -62, 6], [6, 2, 'CCC-ORI-2026-0951', -62, 180], [6, 5, 'FLO-ID-30122', -300, 65],
+  [7, 1, 'ICA-FIT-2025-11870', -100, -10], [7, 2, 'CCC-ORI-2025-2210', -100, 150],
+  [8, 1, 'ICA-FIT-2026-09140', -15, 75], [8, 2, 'CCC-ORI-2026-1215', -15, 200], [8, 4, 'ORG-EU-CO-7781', -200, 28],
+  [9, 1, 'ICA-FIT-2026-09302', -10, 80], [9, 2, 'CCC-ORI-2026-1240', -10, 210],
+].map(([idLote, idCertificacion, numeroDocumento, em, ve]) => ({
+  idLote, idCertificacion, numeroDocumento, fechaEmision: fecha(em), fechaVencimiento: fecha(ve),
+  urlSoporte: idLote === 1 && idCertificacion === 1 ? 'demo/fitosanitario.pdf' : null,
+  estadoValidacion: ve < 0 ? 'VENCIDO' : 'VIGENTE',
+}))
+
+const REGLAS = [
+  ['R-UE-001', 'Reglamento (UE) 2023/1115 - EUDR', 'AMBOS', 'LOTE', 'geolocalizacion_fincas', '=', '100', 'Todas las fincas de origen deben tener geolocalizacion registrada (EUDR).'],
+  ['R-UE-002', 'Reglamento (UE) 2023/1115 - EUDR', 'AMBOS', 'LOTE', 'poligono_si_area_mayor_4ha', '=', 'true', 'Las fincas con mas de 4 hectareas requieren poligono de geolocalizacion.'],
+  ['R-UE-003', 'Reglamento (CE) 178/2002', 'AMBOS', 'LOTE', 'suma_aportes_finca', '=', '100', 'La suma de los aportes de finca debe ser exactamente 100%.'],
+  ['R-UE-004', 'Reglamento (UE) 2023/915', 'CAFE', 'LOTE', 'ocratoxina_a_cafe', '<=', '5.0', 'La ocratoxina A supera el limite de 5,0 ug/kg del Reglamento (UE) 2023/915.'],
+  ['R-UE-005', 'Reglamento (UE) 2023/915', 'CACAO', 'LOTE', 'aflatoxinas_cacao', '<=', '10.0', 'La suma de aflatoxinas supera el limite de 10,0 ug/kg.'],
+  ['R-UE-006', 'Practica comercial ICO / SCA', 'CAFE', 'LOTE', 'humedad_cafe_verde', '<=', '12.5', 'La humedad excede el maximo de 12,5% admitido para cafe verde de exportacion.'],
+  ['R-UE-007', 'Reglamento (UE) 2016/2031', 'AMBOS', 'LOTE', 'certificado_fitosanitario_vigente', '=', 'true', 'Certificado fitosanitario obligatorio ausente o vencido.'],
+  ['R-UE-008', 'Reglamento (UE) 952/2013 - Codigo Aduanero', 'AMBOS', 'ORDEN', 'eori_importador_valido', '=', 'true', 'El importador debe tener un EORI valido y pertenecer a un pais miembro de la UE.'],
+].map(([codigoRegla, normativaReferencia, aplicaTipo, ambito, parametro, operador, valorLimite, mensajeError], i) => ({
+  idRegla: i + 1, codigoRegla, normativaReferencia, idProducto: null, aplicaTipo, ambito, parametro, operador, valorLimite, mensajeError, activa: true,
+}))
+
+const PARAMETROS_LOTE = {
+  geolocalizacion_fincas: '% de fincas de origen con latitud y longitud',
+  suma_aportes_finca: 'suma de porcentajes de aporte',
+  ocratoxina_a_cafe: 'ocratoxina A de la ultima inspeccion (ug/kg)',
+  aflatoxinas_cacao: 'aflatoxinas de la ultima inspeccion (ug/kg)',
+  humedad_cafe_verde: 'humedad de la ultima inspeccion (%)',
+  certificado_fitosanitario_vigente: '1 si hay fitosanitario vigente',
+}
+
+const VALIDACIONES = {}
+
+function compara(valor, operador, limite) {
+  const a = valor === 'true' ? 1 : valor === 'false' ? 0 : Number(valor)
+  const b = limite === 'true' ? 1 : limite === 'false' ? 0 : Number(limite)
+  return { '=': Math.abs(a - b) < 0.0001, '<>': a !== b, '<': a < b, '<=': a <= b, '>': a > b, '>=': a >= b }[operador]
+}
+
+/** Imita sp_validar_lote: evalúa cada regla activa de ámbito LOTE que aplica al tipo de producto. */
+function validarLoteDemo(l) {
+  const tipo = PRODUCTOS.find((p) => p.idProducto === l.idProducto)?.tipo
+  const origen = ORIGEN[l.idLote] ?? []
+  const fincas = origen.map((o) => FINCAS.find((f) => f.idFinca === o[1])).filter(Boolean)
+  const insp = INSPECCIONES.filter((i) => i.idLote === l.idLote).sort((a, b) => b.fechaInspeccion.localeCompare(a.fechaInspeccion))[0]
+  const fito = CERTIFICADOS.some((c) => c.idLote === l.idLote && c.idCertificacion === 1 && c.estadoValidacion === 'VIGENTE' && c.fechaVencimiento >= fecha(0))
+  const valores = {
+    geolocalizacion_fincas: fincas.length ? String(Math.round((fincas.filter((f) => f.latitud != null && f.longitud != null).length / fincas.length) * 100)) : '0',
+    poligono_si_area_mayor_4ha: String(fincas.length > 0 && fincas.every((f) => Number(f.areaHectareas) <= 4 || f.poligonoGeojson)),
+    suma_aportes_finca: String(origen.reduce((a, o) => a + o[2], 0)),
+    ocratoxina_a_cafe: insp?.ocratoxinaPpb != null ? String(insp.ocratoxinaPpb) : null,
+    aflatoxinas_cacao: insp?.aflatoxinasPpb != null ? String(insp.aflatoxinasPpb) : null,
+    humedad_cafe_verde: insp?.humedadPorcentaje != null ? String(insp.humedadPorcentaje) : null,
+    certificado_fitosanitario_vigente: String(fito),
+  }
+  const detalle = REGLAS.filter((r) => r.activa && r.ambito === 'LOTE' && (r.aplicaTipo === 'AMBOS' || r.aplicaTipo === tipo)).map((r) => {
+    const v = valores[r.parametro] ?? null
+    const ok = v !== null && compara(v, r.operador, r.valorLimite)
+    return { codigoRegla: r.codigoRegla, normativa: r.normativaReferencia, parametro: r.parametro, operador: r.operador, valorLimite: r.valorLimite, valorEvaluado: v, resultado: ok ? 'CUMPLE' : 'NO_CUMPLE', mensaje: ok ? null : r.mensajeError }
+  })
+  VALIDACIONES[l.idLote] = { fecha: new Date().toISOString().slice(0, 19), detalle }
+}
+
+function dictamenDemo(l) {
+  const v = VALIDACIONES[l.idLote]
+  const incumplidas = v ? v.detalle.filter((d) => d.resultado === 'NO_CUMPLE').length : 0
+  return {
+    idLote: l.idLote, codigoLote: l.codigoLote, estadoLote: l.estadoLote, ultimaValidacion: v?.fecha ?? null,
+    reglasEvaluadas: v?.detalle.length ?? 0, reglasIncumplidas: incumplidas,
+    dictamen: !v ? 'SIN_VALIDAR' : incumplidas ? 'NO_CUMPLE' : 'CUMPLE', detalle: v?.detalle ?? [],
+  }
 }
 
 function usuarioDemo() {
@@ -489,6 +580,68 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     return LOTES.filter((l) => (!q.get('estado') || l.estadoLote === q.get('estado')) && (!q.get('idProducto') || l.idProducto === Number(q.get('idProducto'))))
       .sort((a, b) => b.fechaRegistro.localeCompare(a.fechaRegistro))
   }
+  if (camino === '/api/certificaciones') return CERTIFICACIONES
+  if (camino === '/api/certificados/por-vencer') {
+    const dias = Number(new URLSearchParams(consulta).get('dias') ?? 30)
+    const hoyD = fecha(0), limite = fecha(dias)
+    return CERTIFICADOS.filter((c) => c.estadoValidacion === 'VIGENTE' && c.fechaVencimiento >= hoyD && c.fechaVencimiento <= limite)
+      .map((c) => ({ idLote: c.idLote, codigoLote: LOTES.find((l) => l.idLote === c.idLote)?.codigoLote, certificado: CERTIFICACIONES.find((x) => x.idCertificacion === c.idCertificacion)?.nombre,
+        numeroDocumento: c.numeroDocumento, fechaVencimiento: c.fechaVencimiento, diasRestantes: Math.round((new Date(c.fechaVencimiento) - new Date(hoyD)) / 86400000) }))
+      .sort((a, b) => a.diasRestantes - b.diasRestantes)
+  }
+  if (camino === '/api/reglas/parametros') return PARAMETROS_LOTE
+  if (camino === '/api/reglas' && metodo === 'GET') return [...REGLAS].sort((a, b) => a.codigoRegla.localeCompare(b.codigoRegla))
+  const regla = camino.match(/^\/api\/reglas(?:\/(\d+))?(\/activa)?$/)
+  if (regla && metodo !== 'GET') {
+    const id = regla[1] ? Number(regla[1]) : null
+    if (regla[2]) {
+      const r = REGLAS.find((x) => x.idRegla === id)
+      r.activa = new URLSearchParams(consulta).get('valor') === 'true'
+      return r
+    }
+    if (!PARAMETROS_LOTE[cuerpo.parametro] && cuerpo.parametro !== 'eori_importador_valido' && cuerpo.parametro !== 'poligono_si_area_mayor_4ha') throw errorDemo(400, 'Parametro desconocido.')
+    if (cuerpo.valorLimite !== 'true' && Number.isNaN(Number(cuerpo.valorLimite))) throw errorDemo(400, "El valor limite debe ser un numero o 'true'.")
+    const datos = { ...cuerpo, aplicaTipo: cuerpo.aplicaTipo ?? 'AMBOS', ambito: cuerpo.parametro === 'eori_importador_valido' ? 'ORDEN' : 'LOTE', activa: cuerpo.activa ?? true }
+    if (id) {
+      const r = REGLAS.find((x) => x.idRegla === id)
+      if (r.codigoRegla !== cuerpo.codigoRegla) throw errorDemo(400, 'El codigo de una regla no se cambia; cree una nueva.')
+      return Object.assign(r, datos)
+    }
+    if (REGLAS.some((r) => r.codigoRegla === cuerpo.codigoRegla)) throw errorDemo(409, `Ya existe la regla ${cuerpo.codigoRegla}.`)
+    const nueva = { idRegla: Math.max(...REGLAS.map((r) => r.idRegla)) + 1, idProducto: null, ...datos }
+    REGLAS.push(nueva)
+    return nueva
+  }
+  const cumple = camino.match(/^\/api\/lotes\/(\d+)\/(certificados|validar|dictamen)(?:\/(\d+)\/soporte)?$/)
+  if (cumple) {
+    const l = LOTES.find((x) => x.idLote === Number(cumple[1]))
+    if (!l) throw errorDemo(404, 'El lote no existe.')
+    if (cumple[2] === 'validar') { validarLoteDemo(l); return dictamenDemo(l) }
+    if (cumple[2] === 'dictamen') return dictamenDemo(l)
+    if (cumple[3]) {
+      const c = CERTIFICADOS.find((x) => x.idLote === l.idLote && x.idCertificacion === Number(cumple[3]))
+      if (!c) throw errorDemo(404, 'El certificado no existe.')
+      if (metodo === 'POST') {
+        const f = cuerpo.archivo
+        if (!['application/pdf', 'image/jpeg', 'image/png'].includes(f.type)) throw errorDemo(400, 'El soporte debe ser PDF, JPG o PNG.')
+        c.urlSoporte = `demo/${f.name}`
+        c.archivoDemo = f
+        return c
+      }
+      if (!c.urlSoporte) throw errorDemo(404, 'El soporte digitalizado no existe.')
+      return c.archivoDemo ?? new Blob(['%PDF-1.4\n% Soporte de ejemplo del modo demo\n'], { type: 'application/pdf' })
+    }
+    if (metodo === 'GET') return CERTIFICADOS.filter((c) => c.idLote === l.idLote).map(({ archivoDemo, ...c }) => c)
+    if (!CERTIFICACIONES.some((c) => c.idCertificacion === cuerpo.idCertificacion)) throw errorDemo(400, 'El tipo de certificado no existe.')
+    if (cuerpo.fechaVencimiento <= cuerpo.fechaEmision) throw errorDemo(400, 'La fecha de vencimiento debe ser posterior a la fecha de emision.')
+    if (cuerpo.fechaVencimiento <= fecha(0)) throw errorDemo(400, 'No es posible cargar un certificado ya vencido.')
+    if (cuerpo.fechaEmision > fecha(0)) throw errorDemo(400, 'La fecha de emision no puede ser futura.')
+    let c = CERTIFICADOS.find((x) => x.idLote === l.idLote && x.idCertificacion === cuerpo.idCertificacion)
+    if (!c) { c = { idLote: l.idLote, idCertificacion: cuerpo.idCertificacion, urlSoporte: null }; CERTIFICADOS.push(c) }
+    Object.assign(c, { numeroDocumento: cuerpo.numeroDocumento.trim(), fechaEmision: cuerpo.fechaEmision, fechaVencimiento: cuerpo.fechaVencimiento, estadoValidacion: 'VIGENTE' })
+    const { archivoDemo, ...vista } = c
+    return vista
+  }
   if (camino === '/api/lotes' && metodo === 'POST') return guardarLoteDemo(null, cuerpo)
   const loteEdit = camino.match(/^\/api\/lotes\/(\d+)$/)
   if (loteEdit && metodo === 'PUT') return guardarLoteDemo(Number(loteEdit[1]), cuerpo)
@@ -616,3 +769,6 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
 
   throw Object.assign(new Error('Esta opción no está disponible en el modo demo.'), { estado: 404, campos: {} })
 }
+
+// Validaciones iniciales de los lotes que ya pasaron por calidad.
+LOTES.filter((l) => ['APROBADO', 'ASIGNADO', 'EXPORTADO'].includes(l.estadoLote)).forEach(validarLoteDemo)

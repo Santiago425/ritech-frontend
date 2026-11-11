@@ -55,6 +55,11 @@ export default function Layout() {
               <Icono nombre="contenedor" /> {esCliente ? 'Mis lotes' : 'Lotes'}
             </NavLink>
           )}
+          {['CERTIFICADOS_CARGAR', 'ORDENES_GESTIONAR', 'REGLAS_ADMINISTRAR', 'VALIDACION_EJECUTAR'].some(tienePermiso) && (
+            <NavLink to="/cumplimiento" className="lateral__enlace">
+              <Icono nombre="escudo" /> Cumplimiento UE
+            </NavLink>
+          )}
           {puedeVerEnvios && (
             <>
               <span className="lateral__seccion">Logística</span>

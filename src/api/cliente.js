@@ -170,3 +170,43 @@ export const ordenesApi = {
 export const transportistasApi = {
   listar: () => api('/api/transportistas'),
 }
+
+/** Petición con archivo (multipart) o que devuelve un archivo (blob). */
+async function apiArchivo(ruta, { metodo = 'GET', archivo } = {}) {
+  if (MODO_DEMO) return respuestaDemo(ruta, metodo, archivo ? { archivo } : undefined)
+  const sesion = leerSesion()
+  const cabeceras = sesion?.token ? { Authorization: `Bearer ${sesion.token}` } : {}
+  let cuerpo
+  if (archivo) {
+    cuerpo = new FormData()
+    cuerpo.append('archivo', archivo)
+  }
+  let respuesta
+  try {
+    respuesta = await fetch(`${API_URL}${ruta}`, { method: metodo, headers: cabeceras, body: cuerpo })
+  } catch {
+    throw new ErrorApi(0, 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+  }
+  if (!respuesta.ok) {
+    const datos = await respuesta.json().catch(() => null)
+    if (respuesta.status === 401 && sesion) alExpirar()
+    throw new ErrorApi(respuesta.status, datos?.mensaje || MENSAJES_POR_ESTADO[respuesta.status] || 'No se pudo procesar el archivo.', datos?.campos)
+  }
+  return archivo ? respuesta.json() : respuesta.blob()
+}
+
+export const cumplimientoApi = {
+  tiposCertificado: () => api('/api/certificaciones'),
+  certificados: (idLote) => api(`/api/lotes/${idLote}/certificados`),
+  cargarCertificado: (idLote, c) => api(`/api/lotes/${idLote}/certificados`, { metodo: 'POST', cuerpo: c }),
+  subirSoporte: (idLote, idCert, archivo) => apiArchivo(`/api/lotes/${idLote}/certificados/${idCert}/soporte`, { metodo: 'POST', archivo }),
+  descargarSoporte: (idLote, idCert) => apiArchivo(`/api/lotes/${idLote}/certificados/${idCert}/soporte`),
+  porVencer: (dias) => api(`/api/certificados/por-vencer${consulta({ dias })}`),
+  reglas: () => api('/api/reglas'),
+  parametros: () => api('/api/reglas/parametros'),
+  crearRegla: (r) => api('/api/reglas', { metodo: 'POST', cuerpo: r }),
+  editarRegla: (id, r) => api(`/api/reglas/${id}`, { metodo: 'PUT', cuerpo: r }),
+  activarRegla: (id, valor) => api(`/api/reglas/${id}/activa?valor=${valor}`, { metodo: 'PATCH' }),
+  validar: (idLote) => api(`/api/lotes/${idLote}/validar`, { metodo: 'POST' }),
+  dictamen: (idLote) => api(`/api/lotes/${idLote}/dictamen`),
+}
