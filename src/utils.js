@@ -80,3 +80,29 @@ export const RESULTADOS_INSPECCION = {
 export const LOTE_INSPECCIONABLE = ['REGISTRADO', 'EN_INSPECCION', 'RECHAZADO']
 
 export const formatoKg = (n) => (n == null ? '—' : `${Number(n).toLocaleString('es-CO', { maximumFractionDigits: 2 })} kg`)
+
+export const ESTADOS_ORDEN = {
+  BORRADOR: { etiqueta: 'Borrador', tono: 'neutro' },
+  CONFIRMADA: { etiqueta: 'Confirmada', tono: 'info' },
+  EN_TRANSITO: { etiqueta: 'En tránsito', tono: 'primario' },
+  ENTREGADA: { etiqueta: 'Entregada', tono: 'exito' },
+  ANULADA: { etiqueta: 'Anulada', tono: 'alerta' },
+}
+
+export const PASOS_ORDEN = ['BORRADOR', 'CONFIRMADA', 'EN_TRANSITO', 'ENTREGADA']
+
+export const INCOTERMS = {
+  EXW: 'En fábrica',
+  FCA: 'Franco transportista',
+  FOB: 'Franco a bordo',
+  CFR: 'Costo y flete',
+  CIF: 'Costo, seguro y flete',
+  CPT: 'Transporte pagado hasta',
+  DAP: 'Entregada en lugar',
+  DDP: 'Entregada con derechos pagados',
+}
+
+export function formatoDinero(valor, moneda = 'EUR') {
+  if (valor == null) return '—'
+  return Number(valor).toLocaleString('es-CO', { style: 'currency', currency: moneda, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}

@@ -62,7 +62,7 @@ const ENVIOS = [
   {
     envio: { idEnvio: 1, idOrden: 1, idTransportista: 1, numeroContenedor: 'MSKU1234567', bookingBl: 'BK-2026-55012',
       puertoOrigen: 'Buenaventura', puertoDestino: 'Hamburgo', fechaEstimadaZarpe: fecha(-20), fechaEstimadaArribo: fecha(6), estadoEnvio: 'EN_TRANSITO' },
-    transportista: 'Maersk Line', numeroOrden: 'OE-2026-0001',
+    transportista: 'Maersk Line', numeroOrden: 'ORD-2026-0001',
     seguimiento: [
       { idSeguimiento: 1, fechaEvento: fechaHora(-24, 8), ubicacion: 'Bodega Popayán', estado: 'PROGRAMADO', observacion: 'Lote consolidado y precintado' },
       { idSeguimiento: 2, fechaEvento: fechaHora(-22, 14), ubicacion: 'Puerto de Buenaventura', estado: 'EN_PUERTO', observacion: 'Contenedor en patio, pendiente de embarque' },
@@ -73,7 +73,7 @@ const ENVIOS = [
   {
     envio: { idEnvio: 2, idOrden: 2, idTransportista: 2, numeroContenedor: 'HLXU7654321', bookingBl: 'BK-2026-55190',
       puertoOrigen: 'Cartagena', puertoDestino: 'Róterdam', fechaEstimadaZarpe: fecha(-30), fechaEstimadaArribo: fecha(-3), estadoEnvio: 'INCIDENCIA' },
-    transportista: 'Hapag-Lloyd', numeroOrden: 'OE-2026-0002',
+    transportista: 'Hapag-Lloyd', numeroOrden: 'ORD-2026-0002',
     seguimiento: [
       { idSeguimiento: 5, fechaEvento: fechaHora(-33), ubicacion: 'Bodega Pitalito', estado: 'PROGRAMADO', observacion: 'Envío programado' },
       { idSeguimiento: 6, fechaEvento: fechaHora(-31), ubicacion: 'Puerto de Cartagena', estado: 'EN_PUERTO', observacion: null },
@@ -84,7 +84,7 @@ const ENVIOS = [
   {
     envio: { idEnvio: 3, idOrden: 3, idTransportista: 1, numeroContenedor: 'MSKU9988776', bookingBl: 'BK-2026-54870',
       puertoOrigen: 'Buenaventura', puertoDestino: 'Amberes', fechaEstimadaZarpe: fecha(-50), fechaEstimadaArribo: fecha(-21), estadoEnvio: 'ENTREGADO' },
-    transportista: 'Maersk Line', numeroOrden: 'OE-2025-0047',
+    transportista: 'Maersk Line', numeroOrden: 'ORD-2026-0003',
     seguimiento: [
       { idSeguimiento: 9, fechaEvento: fechaHora(-53), ubicacion: 'Bodega Popayán', estado: 'PROGRAMADO', observacion: 'Envío programado' },
       { idSeguimiento: 10, fechaEvento: fechaHora(-51), ubicacion: 'Puerto de Buenaventura', estado: 'EN_PUERTO', observacion: null },
@@ -96,7 +96,7 @@ const ENVIOS = [
   {
     envio: { idEnvio: 4, idOrden: 4, idTransportista: 3, numeroContenedor: null, bookingBl: 'BK-2026-55301',
       puertoOrigen: 'Santa Marta', puertoDestino: 'Valencia', fechaEstimadaZarpe: fecha(5), fechaEstimadaArribo: fecha(27), estadoEnvio: 'PROGRAMADO' },
-    transportista: 'CMA CGM', numeroOrden: 'OE-2026-0004',
+    transportista: 'CMA CGM', numeroOrden: 'ORD-2026-0004',
     seguimiento: [
       { idSeguimiento: 14, fechaEvento: fechaHora(-1), ubicacion: 'Santa Marta', estado: 'PROGRAMADO', observacion: 'Envío programado' },
     ],
@@ -152,6 +152,11 @@ const LOTES = [
   { idLote: 2, codigoLote: 'LT-2026-0002', idProducto: 1, pesoNetoKg: 12000, pesoBrutoKg: 12180, fechaCosecha: fecha(-20), fechaRegistro: fechaHora(-15), estadoLote: 'EN_INSPECCION' },
   { idLote: 3, codigoLote: 'LT-2026-0003', idProducto: 2, pesoNetoKg: 8500, pesoBrutoKg: 8640, fechaCosecha: fecha(-12), fechaRegistro: fechaHora(-10), estadoLote: 'REGISTRADO' },
   { idLote: 4, codigoLote: 'LT-2026-0004', idProducto: 2, pesoNetoKg: 6000, pesoBrutoKg: 6100, fechaCosecha: fecha(-40), fechaRegistro: fechaHora(-35), estadoLote: 'RECHAZADO' },
+  { idLote: 5, codigoLote: 'LT-2026-0005', idProducto: 1, pesoNetoKg: 18000, pesoBrutoKg: 18240, fechaCosecha: fecha(-60), fechaRegistro: fechaHora(-55), estadoLote: 'EXPORTADO' },
+  { idLote: 6, codigoLote: 'LT-2026-0006', idProducto: 2, pesoNetoKg: 15000, pesoBrutoKg: 15200, fechaCosecha: fecha(-70), fechaRegistro: fechaHora(-65), estadoLote: 'EXPORTADO' },
+  { idLote: 7, codigoLote: 'LT-2025-0112', idProducto: 1, pesoNetoKg: 16000, pesoBrutoKg: 16210, fechaCosecha: fecha(-95), fechaRegistro: fechaHora(-90), estadoLote: 'EXPORTADO' },
+  { idLote: 8, codigoLote: 'LT-2026-0007', idProducto: 1, pesoNetoKg: 9600, pesoBrutoKg: 9730, fechaCosecha: fecha(-25), fechaRegistro: fechaHora(-22), estadoLote: 'APROBADO' },
+  { idLote: 9, codigoLote: 'LT-2026-0008', idProducto: 2, pesoNetoKg: 7200, pesoBrutoKg: 7300, fechaCosecha: fecha(-18), fechaRegistro: fechaHora(-16), estadoLote: 'APROBADO' },
 ]
 
 const INSPECCIONES = [
@@ -164,6 +169,11 @@ const ORIGEN = {
   2: [[1, 2, 100, 12000]],
   3: [[2, 3, 100, 8500]],
   4: [[3, 4, 100, 6000]],
+  5: [[1, 1, 100, 18000]],
+  6: [[2, 3, 100, 15000]],
+  7: [[1, 2, 100, 16000]],
+  8: [[1, 2, 50, 4800], [1, 1, 50, 4800]],
+  9: [[2, 3, 100, 7200]],
 }
 
 const CUENTAS = [
@@ -205,6 +215,69 @@ function guardarUsuarioDemo(id, u) {
   const nuevo = { idUsuario: Math.max(...CUENTAS.map((x) => x.idUsuario)) + 1, ...datos, estado: 'ACTIVO', ultimoAcceso: null }
   CUENTAS.push(nuevo)
   return vistaUsuario(nuevo)
+}
+
+const TRANSPORTISTAS = [
+  ['Maersk Line', 'NAVIERA', 'bookings@maersk-co.example'],
+  ['Hapag-Lloyd', 'NAVIERA', 'export@hapag-co.example'],
+  ['CMA CGM', 'NAVIERA', 'export@cma-cgm.example'],
+  ['Avianca Cargo', 'AEREA', 'cargo@avianca-co.example'],
+  ['Transportes Andinos', 'TERRESTRE', 'despachos@tandinos.example'],
+].map(([nombre, tipo, contacto], i) => ({ idTransportista: i + 1, nombre, tipo, contacto }))
+
+const ORDENES = [
+  [1, 'ORD-2026-0001', 1, -26, 'FOB', 'EUR', 'EN_TRANSITO'],
+  [2, 'ORD-2026-0002', 3, -36, 'CIF', 'EUR', 'EN_TRANSITO'],
+  [3, 'ORD-2026-0003', 2, -56, 'FOB', 'USD', 'ENTREGADA'],
+  [4, 'ORD-2026-0004', 2, -3, 'DAP', 'EUR', 'CONFIRMADA'],
+  [5, 'ORD-2026-0005', 1, 0, 'FCA', 'EUR', 'BORRADOR'],
+].map(([idOrden, numeroOrden, idCliente, d, incoterm, moneda, estadoOrden]) => ({
+  idOrden, numeroOrden, idCliente, idUsuarioGestor: 2, fechaOrden: fecha(d), incoterm, moneda, valorTotal: 0, estadoOrden,
+}))
+
+const ORDENES_LOTES = [
+  { idOrden: 1, idLote: 5, kgAsignados: 18000, precioUnitario: 6.85 },
+  { idOrden: 2, idLote: 6, kgAsignados: 15000, precioUnitario: 7.4 },
+  { idOrden: 3, idLote: 7, kgAsignados: 16000, precioUnitario: 6.2 },
+  { idOrden: 4, idLote: 1, kgAsignados: 19200, precioUnitario: 7.1 },
+]
+
+const recalcularOrden = (o) => {
+  o.valorTotal = Math.round(ORDENES_LOTES.filter((a) => a.idOrden === o.idOrden).reduce((s, a) => s + a.kgAsignados * a.precioUnitario, 0) * 100) / 100
+  return o
+}
+ORDENES.forEach(recalcularOrden)
+
+const TRANSICIONES_ORDEN = {
+  BORRADOR: ['CONFIRMADA', 'ANULADA'],
+  CONFIRMADA: ['EN_TRANSITO', 'ANULADA', 'BORRADOR'],
+  EN_TRANSITO: ['ENTREGADA'],
+  ENTREGADA: [],
+  ANULADA: [],
+}
+
+function detalleOrdenDemo(o) {
+  return { orden: recalcularOrden(o), cliente: CLIENTES.find((c) => c.idCliente === o.idCliente) ?? null, lotes: ORDENES_LOTES.filter((a) => a.idOrden === o.idOrden) }
+}
+
+function ordenDemo(id, sesion) {
+  const o = ORDENES.find((x) => x.idOrden === id)
+  if (!o || (sesion?.idCliente && o.idCliente !== sesion.idCliente)) throw errorDemo(404, 'La orden no existe.')
+  return o
+}
+
+function ordenEnBorrador(id) {
+  const o = ordenDemo(id)
+  if (o.estadoOrden !== 'BORRADOR') throw errorDemo(400, `Solo se modifica una orden en BORRADOR (esta ${o.estadoOrden}).`)
+  return o
+}
+
+function usuarioDemo() {
+  try {
+    return JSON.parse(localStorage.getItem('ritech.sesion'))?.usuario ?? null
+  } catch {
+    return null
+  }
 }
 
 const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
@@ -285,6 +358,92 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
       (!hasta || a.fechaHora.slice(0, 10) <= hasta))
     const tamano = Number(q.get('tamano') ?? 50), pagina = Number(q.get('pagina') ?? 0)
     return { content: filas.slice(pagina * tamano, (pagina + 1) * tamano), totalElements: filas.length, totalPages: Math.max(1, Math.ceil(filas.length / tamano)), number: pagina, size: tamano }
+  }
+
+  if (camino === '/api/transportistas') return TRANSPORTISTAS
+  if (camino === '/api/ordenes' && metodo === 'GET') {
+    const q = new URLSearchParams(consulta)
+    const yo = usuarioDemo()
+    const idCliente = yo?.idCliente ?? (q.get('idCliente') ? Number(q.get('idCliente')) : null)
+    return ORDENES.filter((o) => (!idCliente || o.idCliente === idCliente) && (!q.get('estado') || o.estadoOrden === q.get('estado')))
+      .map(recalcularOrden).sort((a, b) => b.fechaOrden.localeCompare(a.fechaOrden) || b.idOrden - a.idOrden)
+  }
+  if (camino === '/api/ordenes' && metodo === 'POST') {
+    const c = CLIENTES.find((x) => x.idCliente === cuerpo.idCliente)
+    if (!c) throw errorDemo(400, 'El cliente no existe.')
+    if (c.estado !== 'ACTIVO') throw errorDemo(400, 'No se puede crear una orden para un cliente inactivo.')
+    const n = Math.max(...ORDENES.map((o) => o.idOrden)) + 1
+    const o = { idOrden: n, numeroOrden: `ORD-${hoy.getFullYear()}-${String(n).padStart(4, '0')}`, idCliente: c.idCliente, idUsuarioGestor: 2,
+      fechaOrden: cuerpo.fechaOrden || fecha(0), incoterm: cuerpo.incoterm, moneda: cuerpo.moneda || 'EUR', valorTotal: 0, estadoOrden: 'BORRADOR' }
+    ORDENES.push(o)
+    return o
+  }
+  const orden = camino.match(/^\/api\/ordenes\/(\d+)(?:\/(estado|lotes|envios))?(?:\/(\d+))?$/)
+  if (orden) {
+    const id = Number(orden[1])
+    if (!orden[2] && metodo === 'GET') return detalleOrdenDemo(ordenDemo(id, usuarioDemo()))
+    if (!orden[2] && metodo === 'PUT') {
+      const o = ordenEnBorrador(id)
+      if (o.idCliente !== cuerpo.idCliente && ORDENES_LOTES.some((a) => a.idOrden === id)) throw errorDemo(400, 'Retire los lotes antes de cambiar el cliente de la orden.')
+      return Object.assign(o, { idCliente: cuerpo.idCliente, fechaOrden: cuerpo.fechaOrden || o.fechaOrden, incoterm: cuerpo.incoterm, moneda: cuerpo.moneda || o.moneda })
+    }
+    if (orden[2] === 'estado') {
+      const o = ordenDemo(id)
+      if (!TRANSICIONES_ORDEN[o.estadoOrden].includes(cuerpo.estado)) throw errorDemo(400, `No se puede pasar una orden de ${o.estadoOrden} a ${cuerpo.estado}.`)
+      if (cuerpo.estado === 'CONFIRMADA' && !ORDENES_LOTES.some((a) => a.idOrden === id)) throw errorDemo(400, 'Una orden sin lotes no se puede confirmar.')
+      if (cuerpo.estado === 'ANULADA') {
+        for (let i = ORDENES_LOTES.length - 1; i >= 0; i--) {
+          if (ORDENES_LOTES[i].idOrden === id) {
+            LOTES.find((l) => l.idLote === ORDENES_LOTES[i].idLote).estadoLote = 'APROBADO'
+            ORDENES_LOTES.splice(i, 1)
+          }
+        }
+      }
+      o.estadoOrden = cuerpo.estado
+      return recalcularOrden(o)
+    }
+    if (orden[2] === 'lotes' && metodo === 'POST') {
+      ordenEnBorrador(id)
+      const l = LOTES.find((x) => x.idLote === cuerpo.idLote)
+      if (!l) throw errorDemo(404, 'El lote no existe.')
+      if (l.estadoLote !== 'APROBADO') throw errorDemo(400, `Solo pueden asignarse lotes en estado APROBADO (el lote esta ${l.estadoLote}).`)
+      const kg = cuerpo.kgAsignados ?? l.pesoNetoKg
+      if (kg > l.pesoNetoKg) throw errorDemo(400, `Se asignan ${kg} kg y el lote solo tiene ${l.pesoNetoKg} kg disponibles.`)
+      ORDENES_LOTES.push({ idOrden: id, idLote: l.idLote, kgAsignados: kg, precioUnitario: cuerpo.precioUnitario })
+      l.estadoLote = 'ASIGNADO'
+      return detalleOrdenDemo(ordenDemo(id))
+    }
+    if (orden[2] === 'lotes' && orden[3]) {
+      ordenEnBorrador(id)
+      const i = ORDENES_LOTES.findIndex((a) => a.idOrden === id && a.idLote === Number(orden[3]))
+      if (i < 0) throw errorDemo(404, 'El lote en esta orden no existe.')
+      const l = LOTES.find((x) => x.idLote === Number(orden[3]))
+      if (metodo === 'DELETE') {
+        ORDENES_LOTES.splice(i, 1)
+        l.estadoLote = 'APROBADO'
+      } else {
+        if (cuerpo.kgAsignados > l.pesoNetoKg) throw errorDemo(400, `El lote solo tiene ${l.pesoNetoKg} kg disponibles.`)
+        Object.assign(ORDENES_LOTES[i], { kgAsignados: cuerpo.kgAsignados, precioUnitario: cuerpo.precioUnitario })
+      }
+      return detalleOrdenDemo(ordenDemo(id))
+    }
+    if (orden[2] === 'envios' && metodo === 'POST') {
+      const o = ordenDemo(id)
+      if (o.estadoOrden !== 'CONFIRMADA') throw errorDemo(400, `Solo se programa el envio de una orden CONFIRMADA (esta ${o.estadoOrden}).`)
+      const t = TRANSPORTISTAS.find((x) => x.idTransportista === cuerpo.idTransportista)
+      if (!t) throw errorDemo(400, 'El transportista no existe.')
+      if (cuerpo.fechaEstimadaZarpe && cuerpo.fechaEstimadaArribo && cuerpo.fechaEstimadaArribo < cuerpo.fechaEstimadaZarpe) throw errorDemo(400, 'El arribo estimado no puede ser anterior al zarpe.')
+      if (cuerpo.bookingBl && ENVIOS.some((e) => e.envio.bookingBl === cuerpo.bookingBl)) throw errorDemo(409, `Ya existe un envio con el booking/BL ${cuerpo.bookingBl}.`)
+      if (ENVIOS.some((e) => e.envio.idOrden === id)) throw errorDemo(409, 'La orden ya tiene un envio programado.')
+      const idEnvio = Math.max(...ENVIOS.map((e) => e.envio.idEnvio)) + 1
+      const nuevo = {
+        envio: { idEnvio, idOrden: id, ...cuerpo, estadoEnvio: 'PROGRAMADO' },
+        transportista: t.nombre, numeroOrden: o.numeroOrden,
+        seguimiento: [{ idSeguimiento: 900 + idEnvio, fechaEvento: new Date().toISOString().slice(0, 19), ubicacion: cuerpo.puertoOrigen, estado: 'PROGRAMADO', observacion: 'Envío programado' }],
+      }
+      ENVIOS.push(nuevo)
+      return nuevo
+    }
   }
 
   if (camino === '/api/productores' && metodo === 'GET') return [...PRODUCTORES].sort((a, b) => a.nombre.localeCompare(b.nombre))
@@ -379,6 +538,13 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     })
     encontrado.seguimiento.sort((a, b) => a.fechaEvento.localeCompare(b.fechaEvento))
     encontrado.envio.estadoEnvio = cuerpo.estado
+    // Igual que el backend: EN_TRANSITO y ENTREGADO avanzan la orden.
+    const o = ORDENES.find((x) => x.idOrden === encontrado.envio.idOrden)
+    if (o && cuerpo.estado === 'EN_TRANSITO' && o.estadoOrden === 'CONFIRMADA') {
+      o.estadoOrden = 'EN_TRANSITO'
+      ORDENES_LOTES.filter((a) => a.idOrden === o.idOrden).forEach((a) => { LOTES.find((l) => l.idLote === a.idLote).estadoLote = 'EXPORTADO' })
+    }
+    if (o && cuerpo.estado === 'ENTREGADO') o.estadoOrden = 'ENTREGADA'
     return encontrado
   }
 

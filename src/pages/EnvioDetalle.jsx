@@ -112,7 +112,7 @@ function Detalle({ inicial, onRecargar }) {
         <section className="tarjeta">
           <h2>Datos del envío</h2>
           <div className="datos">
-            <Dato icono="documento" etiqueta="Orden de exportación" valor={numeroOrden} />
+            <Dato icono="documento" etiqueta="Orden de exportación" valor={<Link className="enlace" to={`/ordenes/${envio.idOrden}`}>{numeroOrden}</Link>} />
             <Dato icono="barco" etiqueta="Transportista" valor={transportista} />
             <Dato icono="contenedor" etiqueta="Contenedor (ISO 6346)" valor={envio.numeroContenedor} mono />
             <Dato icono="documento" etiqueta="Booking / BL" valor={envio.bookingBl} mono />

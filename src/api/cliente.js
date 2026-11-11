@@ -147,3 +147,19 @@ export const usuariosApi = {
 export const auditoriaApi = {
   listar: (filtros = {}) => api(`/api/auditoria${consulta(filtros)}`),
 }
+
+export const ordenesApi = {
+  listar: (filtros = {}) => api(`/api/ordenes${consulta(filtros)}`),
+  detalle: (id) => api(`/api/ordenes/${id}`),
+  crear: (o) => api('/api/ordenes', { metodo: 'POST', cuerpo: o }),
+  editar: (id, o) => api(`/api/ordenes/${id}`, { metodo: 'PUT', cuerpo: o }),
+  cambiarEstado: (id, estado) => api(`/api/ordenes/${id}/estado`, { metodo: 'PATCH', cuerpo: { estado } }),
+  asignarLote: (id, a) => api(`/api/ordenes/${id}/lotes`, { metodo: 'POST', cuerpo: a }),
+  editarLote: (id, idLote, a) => api(`/api/ordenes/${id}/lotes/${idLote}`, { metodo: 'PUT', cuerpo: a }),
+  quitarLote: (id, idLote) => api(`/api/ordenes/${id}/lotes/${idLote}`, { metodo: 'DELETE' }),
+  programarEnvio: (id, e) => api(`/api/ordenes/${id}/envios`, { metodo: 'POST', cuerpo: e }),
+}
+
+export const transportistasApi = {
+  listar: () => api('/api/transportistas'),
+}

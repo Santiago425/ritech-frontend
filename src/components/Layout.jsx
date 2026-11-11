@@ -31,13 +31,16 @@ export default function Layout() {
           <NavLink to="/" end className="lateral__enlace">
             <Icono nombre="inicio" /> Inicio
           </NavLink>
+          {(tienePermiso('CLIENTES_CONSULTAR') || puedeVerEnvios) && <span className="lateral__seccion">Comercial</span>}
           {tienePermiso('CLIENTES_CONSULTAR') && (
-            <>
-              <span className="lateral__seccion">Comercial</span>
-              <NavLink to="/clientes" className="lateral__enlace">
-                <Icono nombre="usuarios" /> Clientes UE
-              </NavLink>
-            </>
+            <NavLink to="/clientes" className="lateral__enlace">
+              <Icono nombre="usuarios" /> Clientes UE
+            </NavLink>
+          )}
+          {puedeVerEnvios && (
+            <NavLink to="/ordenes" className="lateral__enlace">
+              <Icono nombre="documento" /> {esCliente ? 'Mis órdenes' : 'Órdenes'}
+            </NavLink>
           )}
           {(tienePermiso('PRODUCTORES_GESTIONAR') || tienePermiso('LOTES_TRAZABILIDAD') || tienePermiso('LOTES_CONSULTAR')) && (
             <span className="lateral__seccion">{tienePermiso('INSPECCION_REGISTRAR') ? 'Calidad' : 'Origen'}</span>

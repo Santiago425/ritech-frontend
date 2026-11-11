@@ -12,6 +12,8 @@ import ProductorDetalle from './pages/ProductorDetalle.jsx'
 import Lotes from './pages/Lotes.jsx'
 import LoteDetalle from './pages/LoteDetalle.jsx'
 import Usuarios from './pages/Usuarios.jsx'
+import Ordenes from './pages/Ordenes.jsx'
+import OrdenDetalle from './pages/OrdenDetalle.jsx'
 import Auditoria from './pages/Auditoria.jsx'
 
 function Protegida({ children, permitido = true }) {
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="productores/:id" element={<Protegida permitido={puedeVerProductores}><ProductorDetalle /></Protegida>} />
         <Route path="lotes" element={<Protegida permitido={tienePermiso('LOTES_CONSULTAR')}><Lotes /></Protegida>} />
         <Route path="lotes/:id" element={<Protegida permitido={tienePermiso('LOTES_CONSULTAR')}><LoteDetalle /></Protegida>} />
+        <Route path="ordenes" element={<Protegida permitido={puedeVerEnvios}><Ordenes /></Protegida>} />
+        <Route path="ordenes/:id" element={<Protegida permitido={puedeVerEnvios}><OrdenDetalle /></Protegida>} />
         <Route path="usuarios" element={<Protegida permitido={tienePermiso('USUARIOS_GESTIONAR')}><Usuarios /></Protegida>} />
         <Route path="auditoria" element={<Protegida permitido={tienePermiso('AUDITORIA_CONSULTAR')}><Auditoria /></Protegida>} />
         <Route path="*" element={<NoEncontrado />} />
