@@ -658,3 +658,10 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .ficha-estado { min-width: calc(50% - 5px); }
   .tabla tfoot { display: none; }
 }
+
+/* ---------- Registro de lotes y origen ---------- */
+.gestion-origen { margin-bottom: 20px; }
+.barra-suma { height: 10px; border-radius: 999px; background: var(--neutro-suave); overflow: hidden; }
+.barra-suma span { display: block; height: 100%; background: var(--cacao); border-radius: 999px; transition: width 0.25s; }
+.barra-suma span.barra-suma--completa { background: var(--exito); }
+.campo__calculado { display: flex; align-items: center; height: 44px; padding: 0 12px; border-radius: 10px; background: #f8fafc; border: 1px dashed var(--borde); font-weight: 600; }

@@ -134,6 +134,13 @@ export const lotesApi = {
   inspecciones: (id) => api(`/api/lotes/${id}/inspecciones`),
   inspeccionar: (id, i) => api(`/api/lotes/${id}/inspecciones`, { metodo: 'POST', cuerpo: i }),
   trazabilidad: (id) => api(`/api/lotes/${id}/trazabilidad`),
+  crear: (l) => api('/api/lotes', { metodo: 'POST', cuerpo: l }),
+  editar: (id, l) => api(`/api/lotes/${id}`, { metodo: 'PUT', cuerpo: l }),
+  aportes: (id) => api(`/api/lotes/${id}/fincas`),
+  agregarAporte: (id, a) => api(`/api/lotes/${id}/fincas`, { metodo: 'POST', cuerpo: a }),
+  editarAporte: (id, idFinca, a) => api(`/api/lotes/${id}/fincas/${idFinca}`, { metodo: 'PUT', cuerpo: a }),
+  quitarAporte: (id, idFinca) => api(`/api/lotes/${id}/fincas/${idFinca}`, { metodo: 'DELETE' }),
+  cerrarTrazabilidad: (id) => api(`/api/lotes/${id}/cerrar-trazabilidad`, { metodo: 'POST' }),
 }
 
 export const usuariosApi = {

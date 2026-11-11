@@ -280,6 +280,28 @@ function usuarioDemo() {
   }
 }
 
+function guardarLoteDemo(id, c) {
+  const p = PRODUCTOS.find((x) => x.idProducto === c.idProducto)
+  if (!p) throw errorDemo(400, 'El producto no existe.')
+  if (c.pesoBrutoKg < c.pesoNetoKg) throw errorDemo(400, 'El peso bruto no puede ser menor que el peso neto.')
+  let codigo = c.codigoLote
+  if (!codigo) {
+    const prefijo = `${p.tipo === 'CAFE' ? 'CAF' : 'CAC'}-${hoy.getFullYear()}-`
+    codigo = prefijo + String(LOTES.filter((l) => l.codigoLote.startsWith(prefijo)).length + 1).padStart(4, '0')
+  }
+  if (LOTES.some((l) => l.codigoLote === codigo && l.idLote !== id)) throw errorDemo(409, `Ya existe un lote con el codigo ${codigo}.`)
+  const datos = { codigoLote: codigo, idProducto: c.idProducto, pesoNetoKg: c.pesoNetoKg, pesoBrutoKg: c.pesoBrutoKg, fechaCosecha: c.fechaCosecha }
+  if (id) {
+    const l = LOTES.find((x) => x.idLote === id)
+    if (l.estadoLote !== 'REGISTRADO') throw errorDemo(400, 'Solo se puede editar un lote en estado REGISTRADO.')
+    if (l.pesoNetoKg !== c.pesoNetoKg && ORIGEN[id]?.length) throw errorDemo(400, 'El lote ya tiene fincas asociadas: retirelas antes de cambiar el peso neto.')
+    return Object.assign(l, datos)
+  }
+  const nuevo = { idLote: Math.max(...LOTES.map((l) => l.idLote)) + 1, ...datos, fechaRegistro: new Date().toISOString().slice(0, 19), estadoLote: 'REGISTRADO' }
+  LOTES.push(nuevo)
+  return nuevo
+}
+
 const errorDemo = (estado, mensaje) => Object.assign(new Error(mensaje), { estado, campos: {} })
 
 function guardarClienteDemo(id, c) {
@@ -462,10 +484,47 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
   if (finca && metodo === 'PUT') return guardarFincaDemo(Number(finca[1]), null, cuerpo)
 
   if (camino === '/api/productos') return PRODUCTOS
-  if (camino === '/api/lotes') {
+  if (camino === '/api/lotes' && metodo === 'GET') {
     const q = new URLSearchParams(consulta)
     return LOTES.filter((l) => (!q.get('estado') || l.estadoLote === q.get('estado')) && (!q.get('idProducto') || l.idProducto === Number(q.get('idProducto'))))
       .sort((a, b) => b.fechaRegistro.localeCompare(a.fechaRegistro))
+  }
+  if (camino === '/api/lotes' && metodo === 'POST') return guardarLoteDemo(null, cuerpo)
+  const loteEdit = camino.match(/^\/api\/lotes\/(\d+)$/)
+  if (loteEdit && metodo === 'PUT') return guardarLoteDemo(Number(loteEdit[1]), cuerpo)
+  const aporte = camino.match(/^\/api\/lotes\/(\d+)\/(fincas|cerrar-trazabilidad)(?:\/(\d+))?$/)
+  if (aporte) {
+    const l = LOTES.find((x) => x.idLote === Number(aporte[1]))
+    if (!l) throw errorDemo(404, 'El lote no existe.')
+    const filas = (ORIGEN[l.idLote] ??= [])
+    const pct = filas.reduce((a, f) => a + f[2], 0)
+    const kg = filas.reduce((a, f) => a + f[3], 0)
+    if (aporte[2] === 'cerrar-trazabilidad') {
+      if (!filas.length) throw errorDemo(422, 'El lote debe tener al menos una finca de origen.')
+      if (Math.abs(pct - 100) > 0.01) throw errorDemo(422, 'La suma de los aportes de finca debe ser exactamente 100%.')
+      if (Math.abs(kg - l.pesoNetoKg) > l.pesoNetoKg * 0.005) throw errorDemo(422, 'La suma de kg aportados no coincide con el peso neto (tol. 0,5%).')
+      return { mensaje: 'Trazabilidad completa', fincas_origen: filas.length, suma_porcentaje: pct, suma_kilogramos: kg }
+    }
+    const vista = (f) => ({ idLote: l.idLote, idFinca: f[1], porcentajeAporte: f[2], kgAportados: f[3] })
+    if (metodo === 'GET') return [...filas].sort((a, b) => b[2] - a[2]).map(vista)
+    if (!['REGISTRADO', 'EN_INSPECCION', 'RECHAZADO'].includes(l.estadoLote)) throw errorDemo(400, `El origen de un lote en estado ${l.estadoLote} ya no se puede modificar.`)
+    const idFinca = aporte[3] ? Number(aporte[3]) : cuerpo.idFinca
+    const i = filas.findIndex((f) => f[1] === idFinca)
+    if (metodo === 'DELETE') {
+      if (i < 0) throw errorDemo(404, 'La finca en este lote no existe.')
+      filas.splice(i, 1)
+      return null
+    }
+    const finca = FINCAS.find((f) => f.idFinca === idFinca)
+    if (!finca) throw errorDemo(400, 'La finca no existe.')
+    if (metodo === 'POST' && i >= 0) throw errorDemo(400, 'Esa finca ya está asociada al lote.')
+    const otros = filas.filter((f) => f[1] !== idFinca).reduce((a, f) => a + f[2], 0)
+    if (otros + Number(cuerpo.porcentajeAporte) > 100.001) throw errorDemo(400, `La suma de aportes superaría el 100% (ya hay ${otros}%).`)
+    const kgF = cuerpo.kgAportados ?? Math.round(l.pesoNetoKg * cuerpo.porcentajeAporte) / 100
+    const fila = [finca.idProductor, idFinca, Number(cuerpo.porcentajeAporte), kgF]
+    if (i >= 0) filas[i] = fila
+    else filas.push(fila)
+    return vista(fila)
   }
   const lote = camino.match(/^\/api\/lotes\/(\d+)(\/\w+)?$/)
   if (lote) {

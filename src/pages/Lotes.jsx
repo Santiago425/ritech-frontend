@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { lotesApi } from '../api/cliente.js'
 import { useSesion } from '../auth/SesionContext.jsx'
 import EstadoBadge from '../components/EstadoBadge.jsx'
 import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
+import LoteForm from '../components/LoteForm.jsx'
 import { useCarga } from '../hooks.js'
 import { ESTADOS_LOTE, LOTE_INSPECCIONABLE, formatoFecha, formatoKg } from '../utils.js'
 
@@ -14,6 +15,7 @@ export default function Lotes() {
   const [params, setParams] = useSearchParams()
   const estado = params.get('estado') ?? ''
   const idProducto = params.get('producto') ?? ''
+  const [nuevo, setNuevo] = useState(false)
   const productos = useCarga(() => lotesApi.productos())
   const lotes = useCarga(() => lotesApi.listar({ estado, idProducto }), [estado, idProducto])
 
@@ -41,7 +43,17 @@ export default function Lotes() {
             {esCliente ? 'Consulta el origen y la calidad de los lotes que compraste.' : esInspector ? 'Inspecciona los lotes y emite el dictamen de calidad.' : 'Lotes de café y cacao con su calidad y trazabilidad.'}
           </p>
         </div>
+        {tienePermiso('LOTES_CREAR') && (
+          <button className="boton boton--primario" onClick={() => setNuevo(true)} disabled={!productos.datos}>+ Registrar lote</button>
+        )}
       </header>
+      {nuevo && (
+        <LoteForm
+          productos={productos.datos ?? []}
+          onCerrar={() => setNuevo(false)}
+          onGuardado={(l) => navigate(`/lotes/${l.idLote}?ver=origen`, { state: { aviso: `Lote ${l.codigoLote} registrado. Ahora asocia sus fincas de origen.` } })}
+        />
+      )}
 
       {esInspector && pendientes > 0 && !estado && (
         <div className="aviso aviso--info"><span>Hay <strong>{pendientes}</strong> {pendientes === 1 ? 'lote pendiente' : 'lotes pendientes'} de inspección.</span></div>
