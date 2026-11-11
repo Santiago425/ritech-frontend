@@ -12,6 +12,7 @@ import ProductorDetalle from './pages/ProductorDetalle.jsx'
 import Lotes from './pages/Lotes.jsx'
 import LoteDetalle from './pages/LoteDetalle.jsx'
 import Usuarios from './pages/Usuarios.jsx'
+import Reportes from './pages/Reportes.jsx'
 import Productos from './pages/Productos.jsx'
 import Cumplimiento from './pages/Cumplimiento.jsx'
 import Ordenes from './pages/Ordenes.jsx'
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="ordenes/:id" element={<Protegida permitido={puedeVerEnvios}><OrdenDetalle /></Protegida>} />
         <Route path="cumplimiento" element={<Protegida permitido={puedeVerCumplimiento}><Cumplimiento /></Protegida>} />
         <Route path="productos" element={<Protegida permitido={tienePermiso('PRODUCTOS_GESTIONAR')}><Productos /></Protegida>} />
+        <Route path="reportes" element={<Protegida permitido={tienePermiso('ORDENES_GESTIONAR') || tienePermiso('AUDITORIA_CONSULTAR')}><Reportes /></Protegida>} />
         <Route path="usuarios" element={<Protegida permitido={tienePermiso('USUARIOS_GESTIONAR')}><Usuarios /></Protegida>} />
         <Route path="auditoria" element={<Protegida permitido={tienePermiso('AUDITORIA_CONSULTAR')}><Auditoria /></Protegida>} />
         <Route path="*" element={<NoEncontrado />} />

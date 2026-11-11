@@ -1,3 +1,4 @@
+import { pdfDemo } from './pdfDemo.js'
 // Datos de ejemplo para presentar la interfaz sin el backend (VITE_MODO_DEMO=true).
 // Reproducen la forma exacta de las respuestas de la API.
 
@@ -473,6 +474,97 @@ export async function respuestaDemo(ruta, metodo, cuerpo) {
     return { content: filas.slice(pagina * tamano, (pagina + 1) * tamano), totalElements: filas.length, totalPages: Math.max(1, Math.ceil(filas.length / tamano)), number: pagina, size: tamano }
   }
 
+  const docOrden = camino.match(/^\/api\/ordenes\/(\d+)\/(factura|lista-empaque)$/)
+  if (docOrden) {
+    const o = ordenDemo(Number(docOrden[1]), usuarioDemo())
+    if (!['CONFIRMADA', 'EN_TRANSITO', 'ENTREGADA'].includes(o.estadoOrden)) throw errorDemo(422, `La orden esta en ${o.estadoOrden}: solo se emiten documentos de ordenes CONFIRMADA, EN_TRANSITO o ENTREGADA.`)
+    const c = CLIENTES.find((x) => x.idCliente === o.idCliente)
+    const filas = ORDENES_LOTES.filter((a) => a.idOrden === o.idOrden).map((a) => {
+      const l = LOTES.find((x) => x.idLote === a.idLote)
+      const p = PRODUCTOS.find((x) => x.idProducto === l.idProducto)
+      return docOrden[2] === 'factura'
+        ? `${l.codigoLote}  ${p.nombreComercial}  HS ${p.codigoHs}  ${a.kgAsignados} kg x ${a.precioUnitario} ${o.moneda} = ${(a.kgAsignados * a.precioUnitario).toFixed(2)} ${o.moneda}`
+        : `${l.codigoLote}  ${p.nombreComercial}  neto ${a.kgAsignados} kg  bruto ${l.pesoBrutoKg} kg  sacos de 70 kg: ${Math.ceil(a.kgAsignados / 70)}`
+    })
+    const factura = docOrden[2] === 'factura'
+    const blob = pdfDemo(factura ? `Factura comercial FC-${hoy.getFullYear()}-${String(o.idOrden).padStart(4, '0')}` : `Lista de empaque - orden ${o.numeroOrden}`, [
+      `Orden: ${o.numeroOrden}   Fecha: ${o.fechaOrden}   Incoterm: ${o.incoterm}`,
+      `Importador: ${c?.razonSocial}   EORI: ${c?.numeroEori}`, `${c?.direccion ?? ''}, ${c?.ciudad ?? ''}`, '', ...filas, '',
+      factura ? `TOTAL: ${recalcularOrden(o).valorTotal.toFixed(2)} ${o.moneda}` : `Peso neto total: ${ORDENES_LOTES.filter((a) => a.idOrden === o.idOrden).reduce((s, a) => s + a.kgAsignados, 0)} kg`,
+    ])
+    return { blob, nombre: `${factura ? 'factura' : 'lista-empaque'}_${o.numeroOrden}.pdf` }
+  }
+  const dds = camino.match(/^\/api\/lotes\/(\d+)\/dds(\/geojson)?$/)
+  if (dds) {
+    const l = LOTES.find((x) => x.idLote === Number(dds[1]))
+    if (!l) throw errorDemo(404, 'El lote no existe.')
+    const origen = ORIGEN[l.idLote] ?? []
+    const pct = origen.reduce((a, o) => a + o[2], 0)
+    const fincas = origen.map((o) => ({ f: FINCAS.find((x) => x.idFinca === o[1]), p: PRODUCTORES.find((x) => x.idProductor === o[0]), pct: o[2], kg: o[3] }))
+    if (dds[2]) {
+      const geo = { type: 'FeatureCollection', features: fincas.map(({ f, p, pct: aporte, kg }) => ({
+        type: 'Feature',
+        geometry: f.poligonoGeojson ? (typeof f.poligonoGeojson === 'string' ? JSON.parse(f.poligonoGeojson) : f.poligonoGeojson) : { type: 'Point', coordinates: [f.longitud, f.latitud] },
+        properties: { ProducerName: p?.nombre, ProducerCountry: 'CO', ProductionPlace: f.nombreFinca, Area: f.areaHectareas, aporte_pct: aporte, kg },
+      })) }
+      return { blob: new Blob([JSON.stringify(geo, null, 2)], { type: 'application/geo+json' }), nombre: `dds_${l.codigoLote}.geojson` }
+    }
+    if (Math.abs(pct - 100) > 0.01) throw errorDemo(422, 'La trazabilidad del lote no esta completa (las fincas deben sumar 100%).')
+    if (dictamenDemo(l).dictamen !== 'CUMPLE') throw errorDemo(422, `El lote tiene dictamen ${dictamenDemo(l).dictamen}: valide el lote y corrija las reglas incumplidas antes de emitir la DDS.`)
+    const p = PRODUCTOS.find((x) => x.idProducto === l.idProducto)
+    const blob = pdfDemo(`Declaracion de diligencia debida (EUDR) - ${l.codigoLote}`, [
+      'Reglamento (UE) 2023/1115', `Producto: ${p.nombreComercial}   HS ${p.codigoHs}   Peso neto: ${l.pesoNetoKg} kg`, `Cosecha: ${l.fechaCosecha}   Pais de produccion: Colombia`, '',
+      'Parcelas de produccion:', ...fincas.map(({ f, pct: a }) => `${f.nombreFinca}  ${f.areaHectareas} ha  (${f.latitud}, ${f.longitud})  ${a}%`), '',
+      'Riesgo de deforestacion: despreciable (verificado)', 'Dictamen normativo: CUMPLE',
+    ])
+    return { blob, nombre: `dds_${l.codigoLote}.pdf` }
+  }
+  if (camino === '/api/reportes/tablero') {
+    const cuenta = (lista, campo, estados) => Object.fromEntries(estados.map((e) => [e, lista.filter((x) => x[campo] === e).length]))
+    ORDENES.forEach(recalcularOrden)
+    const valorPorMes = []
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)
+      ;['EUR', 'USD'].forEach((moneda) => {
+        const os = ORDENES.filter((o) => ['CONFIRMADA', 'EN_TRANSITO', 'ENTREGADA'].includes(o.estadoOrden) && o.moneda === moneda && Number(o.fechaOrden.slice(0, 4)) === d.getFullYear() && Number(o.fechaOrden.slice(5, 7)) === d.getMonth() + 1)
+        const historico = moneda === 'EUR' ? [62000, 0, 88400, 104000, 0, 71500, 96800, 0, 118200, 0, 0, 0][11 - i] : 0
+        const valor = os.reduce((s, o) => s + o.valorTotal, 0) + historico
+        if (valor > 0) valorPorMes.push({ anio: d.getFullYear(), mes: d.getMonth() + 1, moneda, valor, ordenes: os.length + (historico ? 1 : 0) })
+      })
+    }
+    const envios = ENVIOS.map((e) => e.envio)
+    return {
+      ordenesPorEstado: cuenta(ORDENES, 'estadoOrden', ['BORRADOR', 'CONFIRMADA', 'EN_TRANSITO', 'ENTREGADA', 'ANULADA']),
+      ordenesTotal: ORDENES.length,
+      kgExportados: ORDENES_LOTES.filter((a) => ['EN_TRANSITO', 'ENTREGADA'].includes(ORDENES.find((o) => o.idOrden === a.idOrden)?.estadoOrden)).reduce((s, a) => s + a.kgAsignados, 0),
+      valorPorMes,
+      lotesPorEstado: cuenta(LOTES, 'estadoLote', ['REGISTRADO', 'EN_INSPECCION', 'APROBADO', 'RECHAZADO', 'ASIGNADO', 'EXPORTADO']),
+      lotesAprobados: LOTES.filter((l) => ['APROBADO', 'ASIGNADO', 'EXPORTADO'].includes(l.estadoLote)).length,
+      lotesRechazados: LOTES.filter((l) => l.estadoLote === 'RECHAZADO').length,
+      enviosPorEstado: cuenta(envios, 'estadoEnvio', ['PROGRAMADO', 'EN_PUERTO', 'EN_TRANSITO', 'ARRIBADO', 'ENTREGADO', 'INCIDENCIA']),
+      enviosEnTransito: envios.filter((e) => e.estadoEnvio === 'EN_TRANSITO').length,
+      enviosConIncidencia: envios.filter((e) => e.estadoEnvio === 'INCIDENCIA').length,
+      enviosActivos: ENVIOS.filter((e) => ['EN_TRANSITO', 'INCIDENCIA'].includes(e.envio.estadoEnvio)).map((e) => ({
+        idEnvio: e.envio.idEnvio, numeroOrden: e.numeroOrden, cliente: CLIENTES.find((c) => c.idCliente === ORDENES.find((o) => o.idOrden === e.envio.idOrden)?.idCliente)?.razonSocial,
+        transportista: e.transportista, numeroContenedor: e.envio.numeroContenedor, puertoOrigen: e.envio.puertoOrigen, puertoDestino: e.envio.puertoDestino,
+        fechaEstimadaArribo: e.envio.fechaEstimadaArribo, estadoEnvio: e.envio.estadoEnvio,
+      })),
+      generado: new Date().toISOString().slice(0, 19),
+    }
+  }
+  const reporte = camino.match(/^\/api\/reportes\/(ordenes|lotes|envios)$/)
+  if (reporte) {
+    const q = new URLSearchParams(consulta)
+    const desde = q.get('desde'), hasta = q.get('hasta')
+    const enRango = (f) => (!desde || (f && f.slice(0, 10) >= desde)) && (!hasta || (f && f.slice(0, 10) <= hasta))
+    let filas
+    if (reporte[1] === 'ordenes') filas = [['Numero', 'Cliente', 'Fecha', 'Incoterm', 'Moneda', 'Valor total', 'Estado'], ...ORDENES.filter((o) => enRango(o.fechaOrden)).map((o) => [o.numeroOrden, CLIENTES.find((c) => c.idCliente === o.idCliente)?.razonSocial, o.fechaOrden, o.incoterm, o.moneda, recalcularOrden(o).valorTotal, o.estadoOrden])]
+    else if (reporte[1] === 'lotes') filas = [['Codigo', 'Producto', 'Peso neto kg', 'Peso bruto kg', 'Cosecha', 'Registro', 'Estado'], ...LOTES.filter((l) => enRango(l.fechaRegistro)).map((l) => [l.codigoLote, PRODUCTOS.find((p) => p.idProducto === l.idProducto)?.nombreComercial, l.pesoNetoKg, l.pesoBrutoKg, l.fechaCosecha, l.fechaRegistro.slice(0, 10), l.estadoLote])]
+    else filas = [['Envio', 'Orden', 'Transportista', 'Contenedor', 'Origen', 'Destino', 'Zarpe', 'Arribo', 'Estado'], ...ENVIOS.filter((e) => enRango(e.envio.fechaEstimadaZarpe)).map((e) => [e.envio.idEnvio, e.numeroOrden, e.transportista, e.envio.numeroContenedor ?? '', e.envio.puertoOrigen, e.envio.puertoDestino, e.envio.fechaEstimadaZarpe, e.envio.fechaEstimadaArribo, e.envio.estadoEnvio])]
+    const csv = '﻿' + filas.map((f) => f.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';')).join('\r\n')
+    // En modo demo el Excel se entrega como CSV (el backend real genera .xlsx).
+    return { blob: new Blob([csv], { type: 'text/csv;charset=utf-8' }), nombre: `${reporte[1]}${desde ? `_desde_${desde}` : ''}${hasta ? `_hasta_${hasta}` : ''}.csv` }
+  }
   if (camino === '/api/transportistas') return TRANSPORTISTAS
   if (camino === '/api/ordenes' && metodo === 'GET') {
     const q = new URLSearchParams(consulta)

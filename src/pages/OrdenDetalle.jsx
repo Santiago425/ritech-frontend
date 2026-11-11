@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { clientesApi, enviosApi, lotesApi, ordenesApi } from '../api/cliente.js'
+import { clientesApi, documentosApi, enviosApi, lotesApi, ordenesApi } from '../api/cliente.js'
+import BotonArchivo from '../components/BotonArchivo.jsx'
 import { useSesion } from '../auth/SesionContext.jsx'
 import AsignarLote from '../components/AsignarLote.jsx'
 import EstadoBadge from '../components/EstadoBadge.jsx'
@@ -245,6 +246,8 @@ function Detalle({ inicial }) {
             </section>
           )}
 
+          {['CONFIRMADA', 'EN_TRANSITO', 'ENTREGADA'].includes(orden.estadoOrden) && <Documentos orden={orden} />}
+
           {envio && (
             <section className="tarjeta">
               <h2>Envío</h2>
@@ -317,6 +320,36 @@ function Detalle({ inicial }) {
         />
       )}
     </>
+  )
+}
+
+/** SCRUM-27: factura comercial y lista de empaque en PDF. */
+function Documentos({ orden }) {
+  const [error, setError] = useState('')
+  const docs = [
+    ['Factura comercial', 'Valor por lote, Incoterm y datos del importador', () => documentosApi.factura(orden.idOrden)],
+    ['Lista de empaque', 'Pesos neto y bruto por lote para aduana', () => documentosApi.listaEmpaque(orden.idOrden)],
+  ]
+  return (
+    <section className="tarjeta">
+      <h2>Documentos</h2>
+      <ul className="documentos">
+        {docs.map(([titulo, texto, obtener]) => (
+          <li key={titulo}>
+            <span className="documentos__icono"><Icono nombre="documento" tam={18} /></span>
+            <div className="documentos__texto">
+              <strong>{titulo}</strong>
+              <span className="celda-sub">{texto}</span>
+            </div>
+            <div className="documentos__acciones">
+              <BotonArchivo obtener={obtener} abrir clase="boton boton--fantasma" icono="buscar" onError={setError}>Ver</BotonArchivo>
+              <BotonArchivo obtener={obtener} clase="boton boton--fantasma" icono="descarga" onError={setError}>PDF</BotonArchivo>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {error && <div className="aviso aviso--error" role="alert"><Icono nombre="alerta" tam={16} /> {error}</div>}
+    </section>
   )
 }
 

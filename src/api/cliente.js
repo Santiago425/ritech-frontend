@@ -217,3 +217,44 @@ export const productosApi = {
   editar: (id, p) => api(`/api/productos/${id}`, { metodo: 'PUT', cuerpo: p }),
   eliminar: (id) => api(`/api/productos/${id}`, { metodo: 'DELETE' }),
 }
+
+/** Descarga un archivo autenticado y devuelve { blob, nombre } (nombre según Content-Disposition). */
+async function obtenerArchivo(ruta, nombrePorDefecto) {
+  if (MODO_DEMO) return respuestaDemo(ruta, 'GET')
+  const sesion = leerSesion()
+  let respuesta
+  const control = new AbortController()
+  const limite = setTimeout(() => control.abort(), 120000)
+  try {
+    respuesta = await fetch(`${API_URL}${ruta}`, {
+      headers: sesion?.token ? { Authorization: `Bearer ${sesion.token}` } : {},
+      signal: control.signal,
+    })
+  } catch (e) {
+    throw new ErrorApi(0, e.name === 'AbortError' ? 'El servidor tardó demasiado en generar el archivo.' : 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+  } finally {
+    clearTimeout(limite)
+  }
+  if (!respuesta.ok) {
+    const datos = await respuesta.json().catch(() => null)
+    if (respuesta.status === 401 && sesion) alExpirar()
+    throw new ErrorApi(respuesta.status, datos?.mensaje || MENSAJES_POR_ESTADO[respuesta.status] || 'No se pudo generar el archivo.', datos?.campos)
+  }
+  const cd = respuesta.headers.get('Content-Disposition') ?? ''
+  const m = cd.match(/filename\*=UTF-8''([^;]+)/i) ?? cd.match(/filename="?([^";]+)"?/i)
+  const nombre = m ? decodeURIComponent(m[1]) : nombrePorDefecto
+  return { blob: await respuesta.blob(), nombre }
+}
+
+export const documentosApi = {
+  factura: (idOrden) => obtenerArchivo(`/api/ordenes/${idOrden}/factura`, `factura-orden-${idOrden}.pdf`),
+  listaEmpaque: (idOrden) => obtenerArchivo(`/api/ordenes/${idOrden}/lista-empaque`, `lista-empaque-orden-${idOrden}.pdf`),
+  dds: (idLote) => obtenerArchivo(`/api/lotes/${idLote}/dds`, `dds-lote-${idLote}.pdf`),
+  ddsGeojson: (idLote) => obtenerArchivo(`/api/lotes/${idLote}/dds/geojson`, `dds-lote-${idLote}.geojson`),
+}
+
+export const reportesApi = {
+  tablero: () => api('/api/reportes/tablero'),
+  exportar: (reporte, { formato = 'xlsx', desde, hasta } = {}) =>
+    obtenerArchivo(`/api/reportes/${reporte}${consulta({ formato, desde, hasta })}`, `${reporte}.${formato}`),
+}

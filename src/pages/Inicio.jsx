@@ -4,6 +4,7 @@ import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
 import EstadoBadge from '../components/EstadoBadge.jsx'
 import { Cargando, ErrorCaja } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
+import Tablero from '../components/Tablero.jsx'
 import { useCarga } from '../hooks.js'
 import { diasHasta, formatoFecha, resumenArribo } from '../utils.js'
 
@@ -81,7 +82,7 @@ function ResumenEnvios() {
 }
 
 export default function Inicio() {
-  const { usuario, puedeVerEnvios, tienePermiso } = useSesion()
+  const { usuario, esCliente, puedeVerEnvios, tienePermiso } = useSesion()
   const nombre = usuario.nombreCompleto.split(' ')[0]
 
   return (
@@ -94,7 +95,15 @@ export default function Inicio() {
         </div>
       </header>
 
-      {puedeVerEnvios ? (
+      {tienePermiso('INSPECCION_REGISTRAR') && (
+        <div className="aviso aviso--info">
+          <span>Revisa los lotes pendientes de inspección.</span>
+          <Link to="/lotes?estado=EN_INSPECCION" className="enlace">Ver lotes por inspeccionar</Link>
+        </div>
+      )}
+      {!esCliente ? (
+        <Tablero />
+      ) : puedeVerEnvios ? (
         <ResumenEnvios />
       ) : (
         <section className="tarjeta">

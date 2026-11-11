@@ -31,6 +31,11 @@ export default function Layout() {
           <NavLink to="/" end className="lateral__enlace">
             <Icono nombre="inicio" /> Inicio
           </NavLink>
+          {(tienePermiso('ORDENES_GESTIONAR') || tienePermiso('AUDITORIA_CONSULTAR')) && (
+            <NavLink to="/reportes" className="lateral__enlace">
+              <Icono nombre="grafica" /> Reportes
+            </NavLink>
+          )}
           {(tienePermiso('CLIENTES_CONSULTAR') || puedeVerEnvios) && <span className="lateral__seccion">Comercial</span>}
           {tienePermiso('CLIENTES_CONSULTAR') && (
             <NavLink to="/clientes" className="lateral__enlace">

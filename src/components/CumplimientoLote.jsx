@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { cumplimientoApi } from '../api/cliente.js'
+import { cumplimientoApi, documentosApi } from '../api/cliente.js'
+import BotonArchivo from './BotonArchivo.jsx'
 import { useSesion } from '../auth/SesionContext.jsx'
 import { useCarga } from '../hooks.js'
 import { diasHasta, formatoFecha, formatoFechaHora } from '../utils.js'
@@ -151,6 +152,8 @@ export default function CumplimientoLote({ lote }) {
         )}
       </section>
 
+      <Dds lote={lote} dictamen={d?.dictamen} />
+
       <section className="tarjeta">
         <div className="tarjeta__cabecera">
           <div>
@@ -222,5 +225,30 @@ export default function CumplimientoLote({ lote }) {
         />
       )}
     </>
+  )
+}
+
+/** SCRUM-24: declaración de diligencia debida EUDR (PDF) y geolocalización para TRACES (GeoJSON). */
+function Dds({ lote, dictamen }) {
+  const [error, setError] = useState('')
+  const lista = dictamen === 'CUMPLE'
+  return (
+    <section className="tarjeta">
+      <div className="tarjeta__cabecera">
+        <div>
+          <h2>Declaración EUDR (DDS)</h2>
+          <p className="texto-suave">
+            {lista
+              ? 'Declaración de diligencia debida del lote y la geolocalización de sus fincas para cargar en TRACES.'
+              : 'La declaración se emite cuando el lote tiene la trazabilidad al 100 % y dictamen "Cumple".'}
+          </p>
+        </div>
+        <div className="acciones">
+          <BotonArchivo obtener={() => documentosApi.ddsGeojson(lote.idLote)} icono="pin" onError={setError}>GeoJSON</BotonArchivo>
+          <BotonArchivo obtener={() => documentosApi.dds(lote.idLote)} abrir clase="boton boton--primario" icono="documento" onError={setError} disabled={!lista}>Ver DDS</BotonArchivo>
+        </div>
+      </div>
+      {error && <div className="aviso aviso--error" role="alert"><Icono nombre="alerta" tam={16} /> {error}</div>}
+    </section>
   )
 }
