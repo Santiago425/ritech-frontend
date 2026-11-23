@@ -18,6 +18,13 @@ export default function Layout() {
 
   useEffect(() => setMenuAbierto(false), [pathname])
 
+  useEffect(() => {
+    if (!menuAbierto) return
+    const alTeclear = (e) => e.key === 'Escape' && setMenuAbierto(false)
+    window.addEventListener('keydown', alTeclear)
+    return () => window.removeEventListener('keydown', alTeclear)
+  }, [menuAbierto])
+
   const salir = () => {
     cerrarSesion()
     navigate('/login', { replace: true })
@@ -102,7 +109,7 @@ export default function Layout() {
 
       <div className="principal">
         <header className="barra">
-          <button className="barra__menu" onClick={() => setMenuAbierto((v) => !v)} aria-label="Abrir menú">
+          <button className="barra__menu" onClick={() => setMenuAbierto((v) => !v)} aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={menuAbierto}>
             <Icono nombre="menu" tam={22} />
           </button>
           {MODO_DEMO && <span className="chip-demo">Modo demo</span>}
