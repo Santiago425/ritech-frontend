@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useSesion } from './auth/SesionContext.jsx'
 import Layout from './components/Layout.jsx'
 import Login from './pages/Login.jsx'
@@ -24,7 +24,8 @@ const Auditoria = lazy(() => import('./pages/Auditoria.jsx'))
 
 function Protegida({ children, permitido = true }) {
   const { usuario } = useSesion()
-  if (!usuario) return <Navigate to="/login" replace />
+  const { pathname, search } = useLocation()
+  if (!usuario) return <Navigate to="/login" replace state={{ desde: pathname + search }} />
   if (!permitido) return <Navigate to="/" replace />
   return children
 }
