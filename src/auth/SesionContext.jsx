@@ -11,6 +11,10 @@ export const NOMBRE_ROL = {
   CLIENTE_UE: 'Cliente UE',
 }
 
+const NOMBRES_VISIBLES = {
+  'gestor@ritech.co': 'Santiago Campoverde y Manuel Villarreal',
+}
+
 export function SesionProvider({ children }) {
   const [sesion, setSesion] = useState(() => leerSesion())
 
@@ -40,7 +44,9 @@ export function SesionProvider({ children }) {
   }, [])
 
   const valor = useMemo(() => {
-    const usuario = sesion?.usuario ?? null
+    const base = sesion?.usuario ?? null
+    const visible = base && NOMBRES_VISIBLES[base.email?.toLowerCase()]
+    const usuario = visible ? { ...base, nombreCompleto: visible } : base
     const permisos = new Set(usuario?.permisos ?? [])
     const esCliente = usuario?.rol === 'CLIENTE_UE'
     return {
