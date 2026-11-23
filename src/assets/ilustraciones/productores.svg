@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 130">
+  <defs>
+    <g id="mata">
+      <path d="M0 0 V-16" stroke="#5b3b1d" stroke-width="1.6"/>
+      <ellipse cx="-5" cy="-8" rx="6" ry="3" fill="#3f8650" transform="rotate(-25 -5 -8)"/>
+      <ellipse cx="5" cy="-11" rx="6" ry="3" fill="#56a566" transform="rotate(25 5 -11)"/>
+      <ellipse cx="0" cy="-17" rx="5" ry="3" fill="#4f9a5e"/>
+      <circle cx="-2" cy="-10" r="1.4" fill="#d2452f"/><circle cx="2" cy="-14" r="1.4" fill="#e0573c"/>
+    </g>
+  </defs>
+  <circle cx="176" cy="30" r="18" fill="#f3c77f" opacity="0.75"/>
+  <path d="M0 70 L40 40 L80 62 L120 30 L170 66 L220 48 L220 130 L0 130 Z" fill="#cfe3ef"/>
+  <path d="M0 92 C50 70 110 74 160 86 C190 92 205 88 220 84 L220 130 L0 130 Z" fill="#8cc49b"/>
+  <path d="M0 108 C60 94 130 96 220 104 L220 130 L0 130 Z" fill="#5fa874"/>
+  <g transform="translate(128 52)">
+    <path d="M0 22 L24 4 L48 22 Z" fill="#c2410c"/>
+    <rect x="5" y="22" width="38" height="24" fill="#fbf3e8" stroke="#a86d25" stroke-width="1.2"/>
+    <rect x="20" y="32" width="9" height="14" fill="#a86d25"/>
+    <rect x="9" y="28" width="7" height="6" fill="#9ec5dd"/><rect x="33" y="28" width="7" height="6" fill="#9ec5dd"/>
+  </g>
+  <g>
+    <use href="#mata" x="18" y="104"/><use href="#mata" x="38" y="100"/><use href="#mata" x="58" y="98"/><use href="#mata" x="78" y="98"/><use href="#mata" x="98" y="100"/>
+    <use href="#mata" x="28" y="120"/><use href="#mata" x="48" y="117"/><use href="#mata" x="68" y="116"/><use href="#mata" x="88" y="117"/><use href="#mata" x="108" y="119"/>
+  </g>
+  <g transform="translate(190 76)">
+    <path d="M0 0 C-7 -7 -7 -16 0 -22 C7 -16 7 -7 0 0 Z" fill="#c8893b"/>
+    <circle cx="0" cy="-14" r="3" fill="#ffffff"/>
+  </g>
+</svg>
