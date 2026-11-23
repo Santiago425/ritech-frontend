@@ -182,10 +182,16 @@ async function apiArchivo(ruta, { metodo = 'GET', archivo } = {}) {
     cuerpo.append('archivo', archivo)
   }
   let respuesta
+  const control = new AbortController()
+  const limite = setTimeout(() => control.abort(), 120000)
   try {
-    respuesta = await fetch(`${API_URL}${ruta}`, { method: metodo, headers: cabeceras, body: cuerpo })
-  } catch {
-    throw new ErrorApi(0, 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+    respuesta = await fetch(`${API_URL}${ruta}`, { method: metodo, headers: cabeceras, body: cuerpo, signal: control.signal })
+  } catch (e) {
+    throw new ErrorApi(0, e.name === 'AbortError'
+      ? 'El servidor tardó demasiado en procesar el archivo. Intenta de nuevo.'
+      : 'No hay conexión con el servidor. Verifica que el backend esté encendido.')
+  } finally {
+    clearTimeout(limite)
   }
   if (!respuesta.ok) {
     const datos = await respuesta.json().catch(() => null)
