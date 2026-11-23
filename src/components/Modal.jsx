@@ -11,9 +11,11 @@ export default function Modal({ ancho = false, titulo, subtitulo, onCerrar, bloq
 
   useEffect(() => {
     const anterior = document.body.style.overflow
+    const enfocado = document.activeElement
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = anterior
+      if (enfocado instanceof HTMLElement && document.contains(enfocado)) enfocado.focus()
     }
   }, [])
 
