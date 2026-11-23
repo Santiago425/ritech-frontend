@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MODO_DEMO } from '../api/cliente.js'
 import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
 import AsistenteIA from './AsistenteIA.jsx'
+import Fondo3D from './Fondo3D.jsx'
 import { Cargando } from './Estados.jsx'
 import Icono from './Icono.jsx'
 import LimiteError from './LimiteError.jsx'
@@ -128,6 +129,7 @@ export default function Layout() {
       </aside>
       <div className="velo" onClick={() => setMenuAbierto(false)} />
 
+      <Fondo3D />
       <div className="principal">
         <header className="barra">
           <button className="barra__menu" onClick={() => setMenuAbierto((v) => !v)} aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={menuAbierto}>

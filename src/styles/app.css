@@ -1003,3 +1003,45 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .cuentas-prueba { grid-template-columns: 1fr; }
   .cuentas-prueba__clave > span { display: none; }
 }
+
+/* ---------- Fondo 3D ---------- */
+body:has(.fondo-3d) { background: #120c08; }
+.fondo-3d {
+  position: fixed; top: 0; right: 0; bottom: 0; left: var(--ancho-lateral); z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(200, 137, 59, 0.22), transparent 42%),
+    radial-gradient(circle at 85% 80%, rgba(31, 111, 235, 0.16), transparent 45%),
+    linear-gradient(160deg, #1d130c 0%, #140d08 45%, #0b1f2e 100%);
+}
+.fondo-3d canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity 1.2s ease; }
+.fondo-3d--listo canvas { opacity: 1; }
+.app:has(.fondo-3d) .principal { position: relative; z-index: 1; }
+.app:has(.fondo-3d) .barra {
+  background: rgba(18, 12, 8, 0.55); border-bottom-color: rgba(255, 255, 255, 0.08); backdrop-filter: blur(14px) saturate(1.2);
+}
+.app:has(.fondo-3d) .barra__datos strong { color: #fff; }
+.app:has(.fondo-3d) .barra__datos span { color: #c9b9a6; }
+.app:has(.fondo-3d) .barra .boton-icono, .app:has(.fondo-3d) .barra__menu { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.14); color: #f3e6d3; }
+.app:has(.fondo-3d) .barra .boton-icono:hover { background: rgba(200, 137, 59, 0.3); }
+.app:has(.fondo-3d) .avatar { box-shadow: 0 0 0 2px rgba(200, 137, 59, 0.5); }
+
+.app:has(.fondo-3d) .pagina__cabecera {
+  padding: 22px 26px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+}
+.app:has(.fondo-3d) .tarjeta, .app:has(.fondo-3d) .indicador, .app:has(.fondo-3d) .ficha-estado, .app:has(.fondo-3d) .recorrido__paso {
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.75), 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+}
+.app:has(.fondo-3d) .tarjeta, .app:has(.fondo-3d) .indicador { border-color: rgba(255, 255, 255, 0.55); }
+.app:has(.fondo-3d) .indicador { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.app:has(.fondo-3d) .indicador:hover { transform: translateY(-3px); }
+.app:has(.fondo-3d) .recorrido__cabecera h2 { color: #fff; }
+.app:has(.fondo-3d) .recorrido__cabecera .texto-suave { color: #cbb9a3; }
+.app:has(.fondo-3d) .volver { color: #f3e6d3; }
+.app:has(.fondo-3d) .volver:hover { color: #fff; }
+.app:has(.fondo-3d) .contenido > .estado-vista, .app:has(.fondo-3d) .contenido > .estado-vista p { color: #e8dccb; }
+.app:has(.fondo-3d) .bienvenida { border: 1px solid rgba(200, 137, 59, 0.25); box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.8); }
+
+@media (max-width: 860px) {
+  .fondo-3d { left: 0; }
+}
