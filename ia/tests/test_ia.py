@@ -67,8 +67,8 @@ def test_dashboard_rules_mentions_urgent_items():
     r = client.post("/api/v1/dashboard-summary", json=DASHBOARD).json()
     assert r["model"] == "reglas"
     assert "7 órdenes" in r["summary"]
-    assert "incidencia" in r["summary"]
-    assert "rechazados" in r["summary"]
+    assert "con incidencia" in r["summary"]
+    assert "rechazado" in r["summary"]
     assert "EUR 143.120" in r["summary"]
 
 
@@ -121,6 +121,11 @@ def test_event_incident_from_text():
     assert r["state"] == "INCIDENCIA"
     assert r["location"] == "Canal de Panama"
     assert r["note"].endswith(".")
+
+
+def test_event_location_drops_article():
+    r = client.post("/api/v1/shipment-event", json={"text": "retraso de 2 dias por tormenta en el canal de Panama", "currentState": "EN_TRANSITO"}).json()
+    assert r["location"] == "Canal de Panama"
 
 
 def test_event_delivered_uses_destination():

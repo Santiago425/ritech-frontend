@@ -90,11 +90,16 @@ def dashboard_rules(data: dict) -> str:
     pending = lots.get("REGISTRADO", 0) + lots.get("EN_INSPECCION", 0)
     if pending:
         parts.append(f"Hay {pending} lotes esperando inspección y {data.get('lotesAprobados', 0)} aprobados listos para asignar a órdenes.")
-    if data.get("lotesRechazados"):
-        parts.append(f"Ojo: {data['lotesRechazados']} lotes están rechazados y no se pueden exportar hasta una nueva inspección.")
+    rejected = data.get("lotesRechazados", 0)
+    if rejected == 1:
+        parts.append("Ojo: 1 lote está rechazado y no se puede exportar hasta una nueva inspección.")
+    elif rejected:
+        parts.append(f"Ojo: {rejected} lotes están rechazados y no se pueden exportar hasta una nueva inspección.")
     incidents = data.get("enviosConIncidencia", 0)
     transit = data.get("enviosEnTransito", 0)
-    if incidents:
+    if incidents == 1:
+        parts.append("Hay 1 envío con incidencia: conviene revisarlo primero y avisar al cliente.")
+    elif incidents:
         parts.append(f"Hay {incidents} envíos con incidencia: conviene revisarlos primero y avisar al cliente.")
     elif transit:
         parts.append(f"Hay {transit} envíos en tránsito y ninguno con incidencia.")
@@ -102,7 +107,7 @@ def dashboard_rules(data: dict) -> str:
         parts.append("No hay envíos en tránsito en este momento.")
     certs = data.get("certificadosPorVencer", [])
     if certs:
-        parts.append(f"Además, {len(certs)} certificados están por vencer; renuévalos antes de asignar esos lotes.")
+        parts.append(f"Además, {len(certs)} {'certificado está' if len(certs) == 1 else 'certificados están'} por vencer; renuévalos antes de asignar esos lotes.")
     if not pending and not incidents and not certs:
         parts.append("La operación está al día.")
     return " ".join(parts)
@@ -188,6 +193,9 @@ def _place(text: str) -> str:
         idx = normalize(text).find(marker)
         if idx >= 0:
             fragment = text[idx + len(marker):].split(",")[0].split(".")[0].strip()
+            for article in ("el ", "la ", "los ", "las "):
+                if fragment.lower().startswith(article):
+                    fragment = fragment[len(article):]
             if 2 < len(fragment) <= 120:
                 return fragment[0].upper() + fragment[1:]
     return ""
