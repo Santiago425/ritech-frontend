@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         // Librerías que casi no cambian en su propio archivo: el navegador las
