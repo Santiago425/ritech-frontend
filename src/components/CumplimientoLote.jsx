@@ -6,6 +6,7 @@ import { useCarga } from '../hooks.js'
 import { diasHasta, formatoFecha, formatoFechaHora } from '../utils.js'
 import CertificadoForm from './CertificadoForm.jsx'
 import { Cargando, ErrorCaja, Vacio } from './Estados.jsx'
+import AnalisisIA from './AnalisisIA.jsx'
 import Icono from './Icono.jsx'
 import { nombreParametro } from '../parametros.js'
 
@@ -26,7 +27,7 @@ function estadoCertificado(c) {
 }
 
 /** SCRUM-20 y SCRUM-22: certificados del lote y dictamen de cumplimiento normativo UE. */
-export default function CumplimientoLote({ lote }) {
+export default function CumplimientoLote({ lote, producto }) {
   const { tienePermiso } = useSesion()
   const puedeCargar = tienePermiso('CERTIFICADOS_CARGAR')
   const puedeValidar = tienePermiso('VALIDACION_EJECUTAR')
@@ -137,6 +138,7 @@ export default function CumplimientoLote({ lote }) {
                 ))}
               </ul>
             )}
+            <AnalisisIA key={d.ultimaValidacion ?? d.dictamen} lote={lote} producto={producto} dictamen={d} />
           </>
         )}
       </section>

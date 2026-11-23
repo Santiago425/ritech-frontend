@@ -2,6 +2,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MODO_DEMO } from '../api/cliente.js'
 import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
+import AsistenteIA from './AsistenteIA.jsx'
 import { Cargando } from './Estados.jsx'
 import Icono from './Icono.jsx'
 import LimiteError from './LimiteError.jsx'
@@ -152,6 +153,7 @@ export default function Layout() {
           </LimiteError>
         </main>
       </div>
+      <AsistenteIA />
     </div>
   )
 }

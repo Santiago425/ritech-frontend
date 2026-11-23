@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { enviosApi } from '../api/cliente.js'
+import { iaApi, IA_DISPONIBLE } from '../api/ia.js'
 import { ESTADOS_ENVIO, PASOS_ENVIO } from '../utils.js'
 import Icono from './Icono.jsx'
 
@@ -28,6 +29,8 @@ export default function RegistrarEvento({ envio, onCerrar, onRegistrado }) {
   const [errores, setErrores] = useState({})
   const [errorGeneral, setErrorGeneral] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [textoIa, setTextoIa] = useState('')
+  const [ia, setIa] = useState({ cargando: false, error: '', modelo: '' })
   const primerCampo = useRef(null)
 
   useEffect(() => {
@@ -40,6 +43,24 @@ export default function RegistrarEvento({ envio, onCerrar, onRegistrado }) {
   const cambiar = (campo) => (e) => {
     setForm((f) => ({ ...f, [campo]: e.target.value }))
     setErrores((er) => ({ ...er, [campo]: undefined }))
+  }
+
+  const redactarConIa = async () => {
+    if (textoIa.trim().length < 3) return setIa({ cargando: false, error: 'Escribe qué pasó con el envío.', modelo: '' })
+    setIa({ cargando: true, error: '', modelo: '' })
+    try {
+      const r = await iaApi.redactarEvento(textoIa.trim(), envio)
+      setForm((f) => ({
+        ...f,
+        estado: ESTADOS_ENVIO[r.state] ? r.state : f.estado,
+        ubicacion: (r.location || f.ubicacion).slice(0, MAX_UBICACION),
+        observacion: (r.note || f.observacion).slice(0, MAX_OBSERVACION),
+      }))
+      setErrores({})
+      setIa({ cargando: false, error: '', modelo: r.model })
+    } catch (err) {
+      setIa({ cargando: false, error: err.message, modelo: '' })
+    }
   }
 
   const validar = () => {
@@ -86,6 +107,21 @@ export default function RegistrarEvento({ envio, onCerrar, onRegistrado }) {
         </header>
 
         <div className="modal__cuerpo">
+          {IA_DISPONIBLE && (
+            <div className="caja-ia caja-ia--compacta">
+              <label className="campo">
+                <span><Icono nombre="chispa" tam={16} /> Cuéntale a la IA qué pasó</span>
+                <div className="fila-ia">
+                  <input value={textoIa} onChange={(e) => setTextoIa(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); redactarConIa() } }} maxLength={600} placeholder="Ej. retraso de 2 días por tormenta en el canal de Panamá" />
+                  <button type="button" className="boton boton--ia" onClick={redactarConIa} disabled={ia.cargando || enviando}>
+                    {ia.cargando ? <span className="spinner spinner--claro" /> : 'Redactar'}
+                  </button>
+                </div>
+                {ia.error ? <span className="campo__error">{ia.error}</span> : ia.modelo ? <span className="campo__nota">Llené el formulario ({ia.modelo}). Revísalo antes de registrar.</span> : <span className="campo__nota">La IA llena el estado, la ubicación y la observación para el cliente.</span>}
+              </label>
+            </div>
+          )}
+
           <fieldset className="campo">
             <legend>Nuevo estado</legend>
             <div className="opciones-estado">

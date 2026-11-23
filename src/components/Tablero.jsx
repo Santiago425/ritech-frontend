@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { reportesApi } from '../api/cliente.js'
-import { useSesion } from '../auth/SesionContext.jsx'
+import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
 import { useCarga } from '../hooks.js'
 import { ESTADOS_ENVIO, ESTADOS_LOTE, ESTADOS_ORDEN, formatoDinero, formatoFecha, formatoFechaHora, formatoKg, resumenArribo } from '../utils.js'
 import EstadoBadge from './EstadoBadge.jsx'
 import { Cargando, ErrorCaja } from './Estados.jsx'
 import Icono from './Icono.jsx'
+import ResumenIA from './ResumenIA.jsx'
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 const compacto = (v, moneda) =>
@@ -109,7 +110,7 @@ function Distribucion({ conteos, catalogo, enlace }) {
 
 /** SCRUM-31: tablero de indicadores para el personal interno. */
 export default function Tablero() {
-  const { tienePermiso } = useSesion()
+  const { tienePermiso, usuario } = useSesion()
   const t = useCarga(() => reportesApi.tablero())
   const monedas = useMemo(() => [...new Set((t.datos?.valorPorMes ?? []).map((v) => v.moneda))].sort(), [t.datos])
   const [moneda, setMoneda] = useState(null)
@@ -128,6 +129,8 @@ export default function Tablero() {
         <Indicador titulo="Lotes aprobados" valor={d.lotesAprobados} detalle={`${d.lotesRechazados} ${d.lotesRechazados === 1 ? 'rechazado' : 'rechazados'}`} icono="check" tono="exito" a="/lotes" />
         <Indicador titulo="Envíos en tránsito" valor={d.enviosEnTransito} detalle={d.enviosConIncidencia ? `${d.enviosConIncidencia} con incidencia` : 'Sin incidencias'} icono={d.enviosConIncidencia ? 'alerta' : 'barco'} tono={d.enviosConIncidencia ? 'alerta' : 'primario'} a={verOrdenes ? '/envios' : null} />
       </div>
+
+      <ResumenIA tablero={d} rol={NOMBRE_ROL[usuario.rol] ?? usuario.rol} />
 
       <div className="rejilla-tablero">
         <section className="tarjeta">

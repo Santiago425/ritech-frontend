@@ -371,7 +371,7 @@ export default function LoteDetalle() {
         </button>
       </div>
 
-      {pestana === 'calidad' ? <Inspecciones lote={l} esCafe={esCafe} onEstado={setEstadoLocal} /> : pestana === 'cumplimiento' ? <CumplimientoLote lote={l} /> : <Trazabilidad lote={l} />}
+      {pestana === 'calidad' ? <Inspecciones lote={l} esCafe={esCafe} onEstado={setEstadoLocal} /> : pestana === 'cumplimiento' ? <CumplimientoLote lote={l} producto={p?.nombreComercial} /> : <Trazabilidad lote={l} />}
     </div>
   )
 }
