@@ -42,9 +42,9 @@ export default function Envios() {
       <section className="tarjeta">
         <div className="filtros">
           <div className="filtros__chips" role="tablist" aria-label="Filtrar por estado">
-            <button className={`chip ${estado === '' ? 'chip--activo' : ''}`} onClick={() => cambiarEstado('')}>Todos</button>
+            <button role="tab" aria-selected={estado === ''} className={`chip ${estado === '' ? 'chip--activo' : ''}`} onClick={() => cambiarEstado('')}>Todos</button>
             {Object.entries(ESTADOS_ENVIO).map(([clave, info]) => (
-              <button key={clave} className={`chip ${estado === clave ? 'chip--activo' : ''}`} onClick={() => cambiarEstado(clave)}>
+              <button key={clave} role="tab" aria-selected={estado === clave} className={`chip ${estado === clave ? 'chip--activo' : ''}`} onClick={() => cambiarEstado(clave)}>
                 {info.etiqueta}
               </button>
             ))}
