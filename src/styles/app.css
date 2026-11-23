@@ -870,5 +870,5 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .pagina__ilustracion { display: none; }
   .bienvenida__paisaje { width: 100%; opacity: 0.45; }
   .bienvenida::after { background: linear-gradient(90deg, var(--azul-900) 10%, rgba(11, 31, 46, 0.4)); }
-  .login__paisaje { height: 40%; }
+  .login__paisaje { height: 100%; opacity: 0.28; }
 }
