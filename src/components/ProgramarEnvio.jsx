@@ -49,7 +49,7 @@ export default function ProgramarEnvio({ orden, destinoSugerido, onCerrar, onPro
     setErrorGeneral('')
     const er = {}
     if (!form.idTransportista) er.idTransportista = 'Elige el transportista.'
-    if (form.numeroContenedor && !CONTENEDOR.test(form.numeroContenedor)) er.numeroContenedor = '4 letras mayúsculas y 7 dígitos (ISO 6346). Ej. MSKU1234567'
+    if (esMaritimo && form.numeroContenedor && !CONTENEDOR.test(form.numeroContenedor)) er.numeroContenedor = '4 letras mayúsculas y 7 dígitos (ISO 6346). Ej. MSKU1234567'
     if (!form.puertoOrigen.trim()) er.puertoOrigen = 'Indica el puerto de origen.'
     if (!form.puertoDestino.trim()) er.puertoDestino = 'Indica el puerto de destino.'
     if (form.fechaEstimadaZarpe && form.fechaEstimadaZarpe < hoyIso()) er.fechaEstimadaZarpe = 'El zarpe no puede ser en el pasado.'
@@ -59,7 +59,7 @@ export default function ProgramarEnvio({ orden, destinoSugerido, onCerrar, onPro
     setGuardando(true)
     const cuerpo = {
       idTransportista: Number(form.idTransportista),
-      numeroContenedor: form.numeroContenedor || null,
+      numeroContenedor: esMaritimo ? form.numeroContenedor || null : null,
       bookingBl: form.bookingBl.trim() || null,
       puertoOrigen: form.puertoOrigen.trim(),
       puertoDestino: form.puertoDestino.trim(),
