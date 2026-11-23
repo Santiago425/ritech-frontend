@@ -7,24 +7,13 @@ import { diasHasta, formatoFecha, formatoFechaHora } from '../utils.js'
 import CertificadoForm from './CertificadoForm.jsx'
 import { Cargando, ErrorCaja, Vacio } from './Estados.jsx'
 import Icono from './Icono.jsx'
+import { nombreParametro } from '../parametros.js'
 
-export const DICTAMENES = {
+const DICTAMENES = {
   CUMPLE: { etiqueta: 'Cumple', tono: 'exito', texto: 'El lote cumple todas las reglas normativas de la UE evaluadas.' },
   NO_CUMPLE: { etiqueta: 'No cumple', tono: 'alerta', texto: 'El lote incumple una o más reglas y no puede asignarse a una orden.' },
   SIN_VALIDAR: { etiqueta: 'Sin validar', tono: 'neutro', texto: 'El lote todavía no se ha validado contra las reglas de la UE.' },
 }
-
-const PARAMETROS = {
-  geolocalizacion_fincas: 'Fincas geolocalizadas (%)',
-  poligono_si_area_mayor_4ha: 'Polígono en fincas > 4 ha',
-  suma_aportes_finca: 'Suma de aportes (%)',
-  ocratoxina_a_cafe: 'Ocratoxina A (µg/kg)',
-  aflatoxinas_cacao: 'Aflatoxinas (µg/kg)',
-  humedad_cafe_verde: 'Humedad (%)',
-  certificado_fitosanitario_vigente: 'Fitosanitario vigente',
-  eori_importador_valido: 'EORI del importador válido',
-}
-export const nombreParametro = (p) => PARAMETROS[p] ?? p
 
 const valorLegible = (v) => (v == null ? 'Sin dato' : v === 'true' || v === '1' ? 'Sí' : v === 'false' || v === '0' ? 'No' : v)
 
