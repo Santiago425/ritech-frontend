@@ -205,6 +205,17 @@ El backend ya acepta peticiones desde `http://localhost:5173` (variable `ALLOWED
 | `npm run preview` | Sirve la compilación de `dist/` |
 | `npm run lint` | Revisa el código con ESLint |
 
+## Inteligencia artificial
+
+El componente de IA vive en [`ia/`](ia/README.md): un servicio aparte en Python (FastAPI) desplegado en Render como `ritech-ia`. Usa Gemini cuando tiene `GEMINI_API_KEY` y, si no hay llave o falla, responde con reglas propias, así la app nunca se queda sin respuesta.
+
+- **RiBot**: asistente flotante que responde dudas sobre la plataforma, el EUDR y la exportación a la UE.
+- **Resumen con IA** en Inicio: lo urgente de la operación (incidencias, lotes rechazados, certificados por vencer), ventas y una recomendación.
+- **Explicar con IA** en el dictamen del lote: qué significa y qué pasos seguir para que cumpla.
+- **Redactar con IA** al registrar un evento de envío: a partir de una frase llena estado, ubicación y observación para el cliente.
+
+El frontend se conecta con la variable `VITE_IA_URL`; si está vacía, las funciones de IA no se muestran.
+
 ## Novedades 0.5.0
 
 - Después de iniciar sesión se vuelve a la página que se había pedido.
