@@ -111,3 +111,5 @@ export function formatoDinero(valor, moneda = 'EUR') {
     return `${n.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${moneda ?? ''}`.trim()
   }
 }
+
+export const normalizar = (t) => String(t ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()

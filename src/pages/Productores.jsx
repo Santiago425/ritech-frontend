@@ -6,8 +6,8 @@ import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import ProductorForm from '../components/ProductorForm.jsx'
 import { useCarga } from '../hooks.js'
+import { normalizar } from '../utils.js'
 
-const normalizar = (t) => (t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 /** SCRUM-14: productores proveedores; desde aquí se entra a sus fincas. */
 export default function Productores() {
