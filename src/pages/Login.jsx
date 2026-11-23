@@ -54,7 +54,7 @@ export default function Login() {
     if (!password) return setError('Escribe tu contraseña.')
     setEnviando(true)
     try {
-      await iniciarSesion(email.trim(), password)
+      await iniciarSesion(email.trim().toLowerCase(), password)
       navigate(location.state?.desde ?? '/', { replace: true })
     } catch (err) {
       setError(err.message)
