@@ -4,6 +4,7 @@ import { MODO_DEMO } from '../api/cliente.js'
 import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
 import { Cargando } from './Estados.jsx'
 import Icono from './Icono.jsx'
+import LimiteError from './LimiteError.jsx'
 import Marca from './Marca.jsx'
 
 const TITULOS = {
@@ -144,9 +145,11 @@ export default function Layout() {
           </div>
         </header>
         <main className="contenido">
-          <Suspense fallback={<Cargando texto="Cargando módulo…" />}>
-            <Outlet />
-          </Suspense>
+          <LimiteError key={pathname}>
+            <Suspense fallback={<Cargando texto="Cargando módulo…" />}>
+              <Outlet />
+            </Suspense>
+          </LimiteError>
         </main>
       </div>
     </div>
