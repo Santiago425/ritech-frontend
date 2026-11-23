@@ -5,6 +5,7 @@ import EstadoBadge from '../components/EstadoBadge.jsx'
 import { Cargando, ErrorCaja } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import Tablero from '../components/Tablero.jsx'
+import paisaje from '../assets/ilustraciones/paisaje-login.svg'
 import { useCarga } from '../hooks.js'
 import { diasHasta, formatoFecha, resumenArribo } from '../utils.js'
 
@@ -87,11 +88,12 @@ export default function Inicio() {
 
   return (
     <div className="pagina">
-      <header className="pagina__cabecera">
-        <div>
+      <header className="bienvenida">
+        <img src={paisaje} alt="" className="bienvenida__paisaje" aria-hidden="true" />
+        <div className="bienvenida__texto">
           <span className="pagina__antetitulo">{NOMBRE_ROL[usuario.rol] ?? usuario.rol}</span>
           <h1>{saludo()}, {nombre}</h1>
-          <p className="texto-suave">Este es el resumen de tu operación de hoy.</p>
+          <p>Este es el resumen de tu operación de hoy: del cafetal al puerto europeo.</p>
         </div>
       </header>
 

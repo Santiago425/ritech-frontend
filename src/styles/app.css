@@ -838,3 +838,37 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .asistente { right: 16px; bottom: 84px; }
   .fila-ia { flex-direction: column; }
 }
+
+.pagina__cabecera:has(.pagina__ilustracion) {
+  align-items: center; padding: 18px 24px; border: 1px solid var(--borde); border-radius: 16px;
+  background: linear-gradient(115deg, var(--superficie) 45%, var(--cacao-suave));
+}
+.pagina__cabecera:has(.pagina__ilustracion) > div:first-child { flex: 1 1 320px; }
+.pagina__ilustracion { width: 190px; height: 112px; object-fit: contain; flex-shrink: 0; }
+
+.estado-vista__ilustracion { width: 170px; height: 100px; object-fit: contain; opacity: 0.95; }
+
+.login__paisaje { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 56%; object-fit: cover; object-position: center bottom; pointer-events: none; }
+.login__panel > :not(.login__paisaje) { position: relative; z-index: 1; }
+.login__puntos { align-self: flex-start; padding: 16px 20px; border-radius: 14px; background: rgba(11, 31, 46, 0.62); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+.bienvenida {
+  position: relative; overflow: hidden; min-height: 190px; border-radius: 18px; padding: 28px 32px; display: flex; align-items: center;
+  background: linear-gradient(160deg, var(--azul-800), var(--azul-900)); color: #dbe5ee; box-shadow: var(--sombra);
+}
+.bienvenida__paisaje { position: absolute; right: 0; bottom: 0; height: 100%; width: 68%; object-fit: cover; object-position: center bottom; pointer-events: none; }
+.bienvenida::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--azul-900) 30%, rgba(11, 31, 46, 0.55) 55%, rgba(11, 31, 46, 0) 80%); pointer-events: none; }
+.bienvenida__texto { position: relative; z-index: 1; max-width: 520px; }
+.bienvenida__texto .pagina__antetitulo { color: var(--cacao); }
+.bienvenida__texto h1 { color: #fff; margin: 6px 0 8px; font-size: 1.9rem; }
+.bienvenida__texto p { margin: 0; color: #b7c6d4; }
+
+.celda-producto { display: flex; align-items: center; gap: 12px; }
+.miniatura-producto { width: 40px; height: 40px; flex-shrink: 0; }
+
+@media (max-width: 860px) {
+  .pagina__ilustracion { display: none; }
+  .bienvenida__paisaje { width: 100%; opacity: 0.45; }
+  .bienvenida::after { background: linear-gradient(90deg, var(--azul-900) 10%, rgba(11, 31, 46, 0.4)); }
+  .login__paisaje { height: 40%; }
+}
