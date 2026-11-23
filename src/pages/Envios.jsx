@@ -6,7 +6,7 @@ import EstadoBadge from '../components/EstadoBadge.jsx'
 import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import { useCarga } from '../hooks.js'
-import { ESTADOS_ENVIO, formatoFecha, resumenArribo } from '../utils.js'
+import { ESTADOS_ENVIO, formatoFecha, normalizar, resumenArribo } from '../utils.js'
 
 export default function Envios() {
   const { esCliente } = useSesion()
@@ -17,11 +17,11 @@ export default function Envios() {
   const { datos, error, cargando, recargar } = useCarga(() => enviosApi.listar(estado), [estado])
 
   const filtrados = useMemo(() => {
-    const q = busqueda.trim().toLowerCase()
+    const q = normalizar(busqueda.trim())
     if (!datos || !q) return datos ?? []
     return datos.filter((e) =>
       [e.numeroContenedor, e.bookingBl, e.puertoOrigen, e.puertoDestino, String(e.idEnvio)]
-        .some((v) => v?.toLowerCase().includes(q)),
+        .some((v) => normalizar(v).includes(q)),
     )
   }, [datos, busqueda])
 
