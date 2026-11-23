@@ -9,6 +9,14 @@ export default function Modal({ ancho = false, titulo, subtitulo, onCerrar, bloq
     return () => window.removeEventListener('keydown', alTeclear)
   }, [onCerrar, bloqueado])
 
+  useEffect(() => {
+    const anterior = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = anterior
+    }
+  }, [])
+
   return (
     <div className="modal" role="dialog" aria-modal="true" aria-labelledby={idTitulo} onMouseDown={(e) => e.target === e.currentTarget && !bloqueado && onCerrar()}>
       <form className={`modal__caja ${ancho ? 'modal__caja--ancha' : ''}`} onSubmit={onSubmit} noValidate>
