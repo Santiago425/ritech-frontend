@@ -104,5 +104,10 @@ export const INCOTERMS = {
 
 export function formatoDinero(valor, moneda = 'EUR') {
   if (valor == null) return '—'
-  return Number(valor).toLocaleString('es-CO', { style: 'currency', currency: moneda, minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const n = Number(valor)
+  try {
+    return n.toLocaleString('es-CO', { style: 'currency', currency: moneda || 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  } catch {
+    return `${n.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${moneda ?? ''}`.trim()
+  }
 }
