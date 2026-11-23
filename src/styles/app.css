@@ -62,7 +62,7 @@ code { background: rgba(15, 42, 61, 0.08); padding: 1px 5px; border-radius: 4px;
 /* ---------- Botones ---------- */
 .boton {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 40px; padding: 0 18px; border-radius: 11px; border: 1px solid transparent; cursor: pointer;
+  height: 40px; padding: 0 18px; border-radius: 11px; border: 1px solid transparent; cursor: pointer; background: transparent; color: inherit; font-family: inherit;
   font-weight: 600; font-size: 0.9rem; letter-spacing: 0.005em; white-space: nowrap;
   transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
 }
@@ -81,8 +81,13 @@ code { background: rgba(15, 42, 61, 0.08); padding: 1px 5px; border-radius: 4px;
 }
 .boton--secundario { background: var(--superficie); border-color: var(--borde); color: var(--texto); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06); }
 .boton--secundario:hover:not(:disabled) { border-color: #c9b08a; background: #fffdf9; transform: translateY(-1px); box-shadow: 0 6px 14px -8px rgba(168, 109, 37, 0.45); }
-.boton--fantasma { height: 32px; padding: 0 12px; color: var(--azul-700); border-radius: 9px; }
-.boton--fantasma:hover { background: var(--cacao-suave); color: var(--cacao-oscuro); }
+.boton--fantasma {
+  height: 32px; padding: 0 13px; border-radius: 9px; font-size: 0.84rem;
+  color: var(--azul-700); background: var(--superficie); border-color: var(--borde);
+}
+.boton--fantasma:hover:not(:disabled) { background: var(--cacao-suave); border-color: #e3c79c; color: var(--cacao-oscuro); }
+.boton--fantasma.texto-alerta { color: var(--alerta); border-color: #f5d0bd; }
+.boton--fantasma.texto-alerta:hover:not(:disabled) { background: var(--alerta-suave); border-color: var(--alerta); color: #9a3412; }
 .boton--bloque { width: 100%; height: 50px; font-size: 0.98rem; border-radius: 13px; }
 .boton--brillo { overflow: hidden; background: linear-gradient(120deg, var(--azul-800) 0%, var(--azul-700) 45%, var(--cacao-oscuro) 100%); }
 .boton--brillo::after {
@@ -407,7 +412,7 @@ code { background: rgba(15, 42, 61, 0.08); padding: 1px 5px; border-radius: 4px;
 .finca__datos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 10px 0 4px; }
 .finca__datos dt { font-size: 0.72rem; color: var(--texto-suave); }
 .finca__datos dd { margin: 0; font-size: 0.84rem; font-weight: 500; }
-.finca .boton--fantasma { margin-left: -10px; }
+.finca .boton--fantasma { margin-top: 4px; width: fit-content; }
 
 .modal__caja.modal__caja--ancha { max-width: 980px; }
 .finca-form > * { min-width: 0; }
@@ -1045,3 +1050,31 @@ body:has(.fondo-3d) { background: #120c08; }
 @media (max-width: 860px) {
   .fondo-3d { left: 0; }
 }
+
+/* ---------- Tipografia y orden ---------- */
+h1, h2, h3, .indicador__valor, .bienvenida__texto h1, .login__encabezado h2, .login__mensaje h1 {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; letter-spacing: -0.02em;
+}
+h1 { font-size: 1.75rem; font-weight: 800; line-height: 1.15; }
+h2 { font-size: 1.08rem; font-weight: 700; }
+.pagina__antetitulo { font-size: 0.72rem; letter-spacing: 0.14em; font-weight: 700; }
+.pagina__cabecera p.texto-suave { line-height: 1.5; }
+.pagina__cabecera .acciones, .pagina__cabecera > .boton { align-self: center; }
+.texto-suave { line-height: 1.45; }
+.indicador__titulo { font-size: 0.8rem; font-weight: 500; color: var(--texto-suave); }
+.indicador__valor--md { font-size: 1.12rem; white-space: nowrap; }
+.tabla th { font-size: 0.72rem; letter-spacing: 0.08em; font-weight: 700; }
+.celda-accion, td:last-child:has(> .boton) { white-space: nowrap; }
+td .boton + .boton { margin-left: 6px; }
+
+.pestanas {
+  display: inline-flex; width: fit-content; max-width: 100%; overflow-x: auto; gap: 4px; padding: 5px; border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px; background: rgba(255, 255, 255, 0.96); box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.7);
+}
+.pestanas button {
+  height: 38px; padding: 0 16px; border-radius: 10px; border: 0; margin: 0; white-space: nowrap; cursor: pointer;
+  color: var(--texto-suave); transition: background 0.2s, color 0.2s;
+}
+.pestanas button:hover { color: var(--texto); background: var(--cacao-suave); }
+.pestanas button.activa { color: #fff; background: linear-gradient(135deg, var(--azul-700), var(--azul-900)); box-shadow: 0 6px 14px -8px rgba(11, 31, 46, 0.8); }
+.pestanas button.activa .pestanas__num { background: rgba(255, 255, 255, 0.2); color: #fff; }
