@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { cumplimientoApi } from '../api/cliente.js'
-import { nombreParametro } from './CumplimientoLote.jsx'
+import { nombreParametro } from '../parametros.js'
 import Icono from './Icono.jsx'
 import Modal from './Modal.jsx'
 
@@ -107,7 +107,7 @@ export default function ReglaForm({ regla, parametros, siguienteCodigo, onCerrar
           <span>Qué se evalúa</span>
           <select value={form.parametro} onChange={cambiar('parametro')} aria-invalid={!!errores.parametro}>
             <option value="">Selecciona…</option>
-            {Object.entries(opciones).map(([k, desc]) => <option key={k} value={k}>{nombreParametro(k)}</option>)}
+            {Object.keys(opciones).map((k) => <option key={k} value={k}>{nombreParametro(k)}</option>)}
           </select>
           {error('parametro')}
           {form.parametro && !errores.parametro && <span className="campo__nota">{opciones[form.parametro]}</span>}
