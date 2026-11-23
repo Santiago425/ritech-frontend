@@ -278,6 +278,10 @@ ritech-frontend/
 └── .env.example          variables de entorno de ejemplo
 ```
 
+## Créditos de fotos
+
+Fotos libres de [Unsplash](https://unsplash.com/license), servidas desde su CDN: cafetal en Salento por Reiseuhu, cerezas de café en Salento por David Restrepo, cacao por David Clode, granos de café por Patryk Gauza y Hal Gatewood, café de Jardín (Antioquia), rama de cafeto en Doka Estate, tostadora por Battlecreek Coffee Roasters, puerto de Hamburgo por Wolfgang Weiser y buque de contenedores por Eilis Garvey. Las ilustraciones de `src/assets/ilustraciones` son propias del proyecto.
+
 ## Equipo
 
 | Integrante | Rol |
