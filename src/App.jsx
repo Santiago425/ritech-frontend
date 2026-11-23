@@ -1,23 +1,26 @@
+import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useSesion } from './auth/SesionContext.jsx'
 import Layout from './components/Layout.jsx'
 import Login from './pages/Login.jsx'
 import Inicio from './pages/Inicio.jsx'
-import Envios from './pages/Envios.jsx'
-import EnvioDetalle from './pages/EnvioDetalle.jsx'
 import NoEncontrado from './pages/NoEncontrado.jsx'
-import Clientes from './pages/Clientes.jsx'
-import Productores from './pages/Productores.jsx'
-import ProductorDetalle from './pages/ProductorDetalle.jsx'
-import Lotes from './pages/Lotes.jsx'
-import LoteDetalle from './pages/LoteDetalle.jsx'
-import Usuarios from './pages/Usuarios.jsx'
-import Reportes from './pages/Reportes.jsx'
-import Productos from './pages/Productos.jsx'
-import Cumplimiento from './pages/Cumplimiento.jsx'
-import Ordenes from './pages/Ordenes.jsx'
-import OrdenDetalle from './pages/OrdenDetalle.jsx'
-import Auditoria from './pages/Auditoria.jsx'
+
+// Cada módulo se descarga solo cuando el usuario entra a él (code splitting).
+const Envios = lazy(() => import('./pages/Envios.jsx'))
+const EnvioDetalle = lazy(() => import('./pages/EnvioDetalle.jsx'))
+const Clientes = lazy(() => import('./pages/Clientes.jsx'))
+const Productores = lazy(() => import('./pages/Productores.jsx'))
+const ProductorDetalle = lazy(() => import('./pages/ProductorDetalle.jsx'))
+const Lotes = lazy(() => import('./pages/Lotes.jsx'))
+const LoteDetalle = lazy(() => import('./pages/LoteDetalle.jsx'))
+const Usuarios = lazy(() => import('./pages/Usuarios.jsx'))
+const Reportes = lazy(() => import('./pages/Reportes.jsx'))
+const Productos = lazy(() => import('./pages/Productos.jsx'))
+const Cumplimiento = lazy(() => import('./pages/Cumplimiento.jsx'))
+const Ordenes = lazy(() => import('./pages/Ordenes.jsx'))
+const OrdenDetalle = lazy(() => import('./pages/OrdenDetalle.jsx'))
+const Auditoria = lazy(() => import('./pages/Auditoria.jsx'))
 
 function Protegida({ children, permitido = true }) {
   const { usuario } = useSesion()
