@@ -205,6 +205,19 @@ El backend ya acepta peticiones desde `http://localhost:5173` (variable `ALLOWED
 | `npm run preview` | Sirve la compilación de `dist/` |
 | `npm run lint` | Revisa el código con ESLint |
 
+## Novedades 0.5.0
+
+- Después de iniciar sesión se vuelve a la página que se había pedido.
+- La sesión se cierra sola cuando vence el token.
+- Título de la pestaña según el módulo abierto.
+- Aviso con botón de recarga si un módulo no carga (por ejemplo, tras un despliegue nuevo).
+- Botón para mostrar u ocultar la contraseña en el login.
+- Búsquedas de envíos y usuarios sin importar tildes ni mayúsculas.
+- Envíos: contador de resultados y botón para limpiar filtros.
+- Modales más accesibles: título único, foco de vuelta al cerrar y sin scroll de fondo.
+- Programar envío no manda contenedor cuando el transporte no es marítimo.
+- Tiempo límite en la subida y descarga de soportes.
+
 ## Despliegue
 
 El sitio está publicado en **Render** como sitio estático, definido en [`render.yaml`](render.yaml):
