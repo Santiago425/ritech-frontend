@@ -7,7 +7,7 @@ import Icono from '../components/Icono.jsx'
 import Modal from '../components/Modal.jsx'
 import UsuarioForm from '../components/UsuarioForm.jsx'
 import { useCarga } from '../hooks.js'
-import { formatoFechaHora } from '../utils.js'
+import { formatoFechaHora, normalizar } from '../utils.js'
 
 const ESTADOS = {
   ACTIVO: { etiqueta: 'Activo', tono: 'exito' },
@@ -40,9 +40,9 @@ export default function Usuarios() {
 
   const lista = useMemo(() => usuarios.datos ?? [], [usuarios.datos])
   const filtrados = useMemo(() => {
-    const t = texto.trim().toLowerCase()
+    const t = normalizar(texto.trim())
     return lista.filter((u) =>
-      (!t || u.nombreCompleto.toLowerCase().includes(t) || u.email.includes(t)) &&
+      (!t || normalizar(u.nombreCompleto).includes(t) || normalizar(u.email).includes(t)) &&
       (!rol || u.rol?.nombreRol === rol) &&
       (!estado || u.estado === estado))
   }, [lista, texto, rol, estado])
