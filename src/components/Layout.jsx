@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MODO_DEMO } from '../api/cliente.js'
 import { NOMBRE_ROL, useSesion } from '../auth/SesionContext.jsx'
+import { Cargando } from './Estados.jsx'
 import Icono from './Icono.jsx'
 import Marca from './Marca.jsx'
 
@@ -117,7 +118,9 @@ export default function Layout() {
           </div>
         </header>
         <main className="contenido">
-          <Outlet />
+          <Suspense fallback={<Cargando texto="Cargando módulo…" />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
