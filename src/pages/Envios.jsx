@@ -60,7 +60,14 @@ export default function Envios() {
         ) : error ? (
           <ErrorCaja error={error} onReintentar={recargar} />
         ) : filtrados.length === 0 ? (
-          <Vacio titulo="No hay envíos" texto={busqueda || estado ? 'Prueba con otro filtro o búsqueda.' : 'Cuando se programe un envío aparecerá aquí.'} />
+          <>
+            <Vacio titulo="No hay envíos" texto={busqueda || estado ? 'Prueba con otro filtro o búsqueda.' : 'Cuando se programe un envío aparecerá aquí.'} />
+            {(busqueda || estado) && (
+              <p className="centrado">
+                <button className="boton boton--secundario" onClick={() => { setBusqueda(''); cambiarEstado('') }}>Limpiar filtros</button>
+              </p>
+            )}
+          </>
         ) : (
           <div className="tabla-contenedor">
             <table className="tabla">
