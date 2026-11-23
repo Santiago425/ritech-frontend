@@ -54,7 +54,7 @@ const ROLES = [
 
 const USUARIOS = {
   'admin@ritech.co': { idUsuario: 1, nombreCompleto: 'Felipe Ceron', rol: 'ADMINISTRADOR' },
-  'gestor@ritech.co': { idUsuario: 2, nombreCompleto: 'Manuel Alejandro Villarreal', rol: 'GESTOR_EXPORTACIONES' },
+  'gestor@ritech.co': { idUsuario: 2, nombreCompleto: 'Santiago Campoverde y Manuel Villarreal', rol: 'GESTOR_EXPORTACIONES' },
   'inspector@ritech.co': { idUsuario: 3, nombreCompleto: 'Camilo Bolaños', rol: 'INSPECTOR_CALIDAD' },
   'cliente@importadora-eu.com': { idUsuario: 4, nombreCompleto: 'Kaffeehaus Import GmbH', rol: 'CLIENTE_UE', idCliente: 1 },
 }
@@ -184,7 +184,7 @@ const ORIGEN = {
 
 const CUENTAS = [
   { idUsuario: 1, rol: 'ADMINISTRADOR', idCliente: null, nombreCompleto: 'Felipe Ceron', email: 'admin@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(0, 8) },
-  { idUsuario: 2, rol: 'GESTOR_EXPORTACIONES', idCliente: null, nombreCompleto: 'Manuel Alejandro Villarreal', email: 'gestor@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(-1, 15) },
+  { idUsuario: 2, rol: 'GESTOR_EXPORTACIONES', idCliente: null, nombreCompleto: 'Santiago Campoverde y Manuel Villarreal', email: 'gestor@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(-1, 15) },
   { idUsuario: 3, rol: 'INSPECTOR_CALIDAD', idCliente: null, nombreCompleto: 'Camilo Bolaños', email: 'inspector@ritech.co', estado: 'ACTIVO', ultimoAcceso: fechaHora(-2, 10) },
   { idUsuario: 4, rol: 'CLIENTE_UE', idCliente: 1, nombreCompleto: 'Kaffeehaus Import GmbH', email: 'cliente@importadora-eu.com', estado: 'ACTIVO', ultimoAcceso: fechaHora(-3, 11) },
   { idUsuario: 5, rol: 'INSPECTOR_CALIDAD', idCliente: null, nombreCompleto: 'Laura Muñoz Ortega', email: 'lmunoz@ritech.co', estado: 'INACTIVO', ultimoAcceso: fechaHora(-60, 9) },
