@@ -53,6 +53,9 @@ export default function Envios() {
             <Icono nombre="buscar" tam={16} />
             <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Contenedor, booking o puerto" aria-label="Buscar envío" />
           </label>
+          {!cargando && !error && (
+            <span className="texto-suave contador">{filtrados.length} {filtrados.length === 1 ? 'envío' : 'envíos'}</span>
+          )}
         </div>
 
         {cargando ? (
