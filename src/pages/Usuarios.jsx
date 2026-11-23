@@ -38,7 +38,7 @@ export default function Usuarios() {
   const [cambio, setCambio] = useState(null) // { usuario, estado }
   const [aviso, setAviso] = useState('')
 
-  const lista = usuarios.datos ?? []
+  const lista = useMemo(() => usuarios.datos ?? [], [usuarios.datos])
   const filtrados = useMemo(() => {
     const t = texto.trim().toLowerCase()
     return lista.filter((u) =>
