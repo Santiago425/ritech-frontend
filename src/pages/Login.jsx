@@ -37,6 +37,10 @@ export default function Login() {
   useEffect(() => despertarServidor(), [])
 
   useEffect(() => {
+    document.title = 'Iniciar sesión · RiTech Exports'
+  }, [])
+
+  useEffect(() => {
     if (!enviando) return setLento(false)
     const t = setTimeout(() => setLento(true), 4000)
     return () => clearTimeout(t)

@@ -6,6 +6,20 @@ import { Cargando } from './Estados.jsx'
 import Icono from './Icono.jsx'
 import Marca from './Marca.jsx'
 
+const TITULOS = {
+  '': 'Inicio',
+  envios: 'Envíos',
+  clientes: 'Clientes UE',
+  productores: 'Productores y fincas',
+  lotes: 'Lotes',
+  ordenes: 'Órdenes',
+  cumplimiento: 'Cumplimiento UE',
+  productos: 'Productos',
+  reportes: 'Reportes',
+  usuarios: 'Usuarios y roles',
+  auditoria: 'Auditoría',
+}
+
 function iniciales(nombre = '') {
   return nombre.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase()
 }
@@ -17,6 +31,11 @@ export default function Layout() {
   const { pathname } = useLocation()
 
   useEffect(() => setMenuAbierto(false), [pathname])
+
+  useEffect(() => {
+    const titulo = TITULOS[pathname.split('/')[1] ?? '']
+    document.title = titulo ? `${titulo} · RiTech Exports` : 'RiTech Exports'
+  }, [pathname])
 
   useEffect(() => {
     if (!menuAbierto) return
