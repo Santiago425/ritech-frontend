@@ -6,6 +6,7 @@ import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import Modal from '../components/Modal.jsx'
 import { useCarga } from '../hooks.js'
+import Ilustracion, { MiniaturaProducto } from '../components/Ilustracion.jsx'
 
 const HS = /^[0-9]{4}([0-9]{2}){0,3}$/
 const TIPOS = { CAFE: 'Café', CACAO: 'Cacao' }
@@ -46,6 +47,7 @@ export default function Productos() {
           <h1>Productos</h1>
           <p className="texto-suave">Café y cacao que se exportan, con su variedad y código arancelario HS para aduanas.</p>
         </div>
+        <Ilustracion nombre="productos" />
         {puedeGestionar && <button className="boton boton--primario" onClick={() => setModal({ tipo: 'form' })}>+ Nuevo producto</button>}
       </header>
 
@@ -70,8 +72,13 @@ export default function Productos() {
                   return (
                     <tr key={p.idProducto} className="tabla__fila--fija">
                       <td data-etiqueta="Producto">
-                        <strong>{p.nombreComercial}</strong>
-                        {p.variedad && <span className="celda-sub">Variedad {p.variedad}</span>}
+                        <div className="celda-producto">
+                          <MiniaturaProducto tipo={p.tipo} />
+                          <div>
+                            <strong>{p.nombreComercial}</strong>
+                            {p.variedad && <span className="celda-sub">Variedad {p.variedad}</span>}
+                          </div>
+                        </div>
                       </td>
                       <td data-etiqueta="Tipo"><span className={`badge badge--${p.tipo === 'CAFE' ? 'primario' : 'alerta'}`}>{TIPOS[p.tipo] ?? p.tipo}</span></td>
                       <td data-etiqueta="Código HS" className="mono">{p.codigoHs}</td>

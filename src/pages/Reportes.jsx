@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { reportesApi } from '../api/cliente.js'
 import BotonArchivo from '../components/BotonArchivo.jsx'
 import Icono from '../components/Icono.jsx'
+import Ilustracion from '../components/Ilustracion.jsx'
 
 const REPORTES = [
   { clave: 'ordenes', titulo: 'Órdenes de exportación', texto: 'Número, cliente, fecha, Incoterm, moneda, valor total y estado.', filtro: 'fecha de la orden', icono: 'documento' },
@@ -43,6 +44,7 @@ export default function Reportes() {
           <h1>Exportar reportes</h1>
           <p className="texto-suave">Descarga la información en Excel o CSV para análisis, auditorías o entregas al cliente.</p>
         </div>
+        <Ilustracion nombre="reportes" />
       </header>
 
       <section className="tarjeta">

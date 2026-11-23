@@ -1,4 +1,6 @@
 import Icono from './Icono.jsx'
+import Ilustracion from './Ilustracion.jsx'
+import { ILUSTRACION_POR_ICONO } from '../ilustraciones.js'
 
 export function Cargando({ texto = 'Cargando…' }) {
   return (
@@ -26,7 +28,7 @@ export function ErrorCaja({ error, onReintentar }) {
 export function Vacio({ titulo, texto, icono = 'barco' }) {
   return (
     <div className="estado-vista">
-      <Icono nombre={icono} tam={32} />
+      {ILUSTRACION_POR_ICONO[icono] ? <Ilustracion nombre={ILUSTRACION_POR_ICONO[icono]} className="estado-vista__ilustracion" /> : <Icono nombre={icono} tam={32} />}
       <h3>{titulo}</h3>
       {texto && <p>{texto}</p>}
     </div>

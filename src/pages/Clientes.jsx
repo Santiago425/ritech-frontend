@@ -5,6 +5,7 @@ import ClienteForm from '../components/ClienteForm.jsx'
 import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import { useCarga } from '../hooks.js'
+import Ilustracion from '../components/Ilustracion.jsx'
 
 const POR_PAGINA = 20
 
@@ -60,6 +61,7 @@ export default function Clientes() {
           <h1>Clientes UE</h1>
           <p className="texto-suave">Importadores de la Unión Europea con su EORI y VAT.</p>
         </div>
+        <Ilustracion nombre="clientes" />
         {puedeGestionar && (
           <button className="boton boton--primario" onClick={() => setFormulario('nuevo')} disabled={!paises.datos}>
             + Nuevo cliente
