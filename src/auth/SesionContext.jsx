@@ -23,6 +23,14 @@ export function SesionProvider({ children }) {
     registrarAlExpirar(cerrarSesion)
   }, [cerrarSesion])
 
+  useEffect(() => {
+    if (!sesion?.expiraEn) return
+    const restante = sesion.expiraEn - Date.now()
+    if (restante <= 0) return cerrarSesion()
+    const t = setTimeout(cerrarSesion, Math.min(restante, 2147483647))
+    return () => clearTimeout(t)
+  }, [sesion, cerrarSesion])
+
   const iniciarSesion = useCallback(async (email, password) => {
     const r = await authApi.login(email, password)
     const nueva = { token: r.token, usuario: r.usuario, expiraEn: Date.now() + r.expiraEnSegundos * 1000 }
