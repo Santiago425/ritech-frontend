@@ -158,7 +158,7 @@ export default function Usuarios() {
                           <button className="boton boton--fantasma" onClick={(e) => { e.stopPropagation(); setFormulario(u) }}>Editar</button>
                           {!esYo && (
                             <button
-                              className="boton boton--fantasma"
+                              className={`boton boton--fantasma ${u.estado === 'ACTIVO' ? 'texto-alerta' : ''}`}
                               onClick={(e) => { e.stopPropagation(); setCambio({ usuario: u, estado: u.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO' }) }}
                             >
                               {u.estado === 'ACTIVO' ? 'Inactivar' : u.estado === 'BLOQUEADO' ? 'Desbloquear' : 'Activar'}
