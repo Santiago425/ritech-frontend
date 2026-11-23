@@ -10,17 +10,18 @@ const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const PASSWORD_PRUEBA = import.meta.env.VITE_PASSWORD_PRUEBA || '626588b636c79dd6116fe404f3e8ca43'
 const USUARIOS_PRUEBA = [
-  { rol: 'Cliente UE', email: 'cliente@importadora-eu.com' },
-  { rol: 'Gestor', email: 'gestor@ritech.co' },
-  { rol: 'Administrador', email: 'admin@ritech.co' },
-  { rol: 'Inspector', email: 'inspector@ritech.co' },
+  { rol: 'Cliente UE', email: 'cliente@importadora-eu.com', icono: 'usuarios', tono: 'info' },
+  { rol: 'Gestor', email: 'gestor@ritech.co', icono: 'barco', tono: 'cacao' },
+  { rol: 'Administrador', email: 'admin@ritech.co', icono: 'llave', tono: 'azul' },
+  { rol: 'Inspector', email: 'inspector@ritech.co', icono: 'escudo', tono: 'exito' },
 ]
 
-function copiar(texto) {
+async function copiar(texto) {
   try {
-    navigator.clipboard?.writeText(texto)
+    await navigator.clipboard?.writeText(texto)
+    return true
   } catch {
-    // Sin permiso de portapapeles: el usuario puede seleccionar el texto a mano.
+    return false
   }
 }
 
@@ -33,6 +34,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [verClave, setVerClave] = useState(false)
+  const [copiado, setCopiado] = useState(false)
   const [lento, setLento] = useState(false)
 
   // El backend gratuito se duerme tras un rato sin uso: se despierta apenas se abre el login.
@@ -80,18 +82,27 @@ export default function Login() {
         </ul>
       </section>
 
-      <section className="login__formulario">
-        <form onSubmit={enviar} noValidate>
-          <h2>Iniciar sesión</h2>
-          <p className="texto-suave">Ingresa con tu cuenta corporativa.</p>
+      <section className="login__formulario" style={{ '--foto-granos': `url(${FOTOS.granos(1400)})` }}>
+        <form onSubmit={enviar} noValidate className="login__tarjeta">
+          <div className="login__encabezado">
+            <span className="login__sello"><Icono nombre="cafe" tam={22} /></span>
+            <div>
+              <h2>Bienvenido de nuevo</h2>
+              <p>Ingresa con tu cuenta corporativa para continuar.</p>
+            </div>
+          </div>
 
-          <label className="campo">
+          <label className="campo campo--icono">
             <span>Correo</span>
-            <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nombre@empresa.com" autoFocus />
+            <div className="campo__envoltura">
+              <Icono nombre="correo" tam={18} />
+              <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nombre@empresa.com" autoFocus />
+            </div>
           </label>
-          <label className="campo">
+          <label className="campo campo--icono">
             <span>Contraseña</span>
-            <div className="campo__clave">
+            <div className="campo__envoltura campo__clave">
+              <Icono nombre="candado" tam={18} />
               <input type={verClave ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
               <button type="button" className="boton-icono" onClick={() => setVerClave((v) => !v)} aria-label={verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={verClave}>
                 <Icono nombre={verClave ? 'ojoTachado' : 'ojo'} tam={18} />
@@ -107,36 +118,41 @@ export default function Login() {
 
           {error && <div className="aviso aviso--error" role="alert"><Icono nombre="alerta" tam={16} /> {error}</div>}
 
-          <button className="boton boton--primario boton--bloque" disabled={enviando}>
-            {enviando ? <span className="spinner spinner--claro" /> : 'Ingresar'}
+          <button className="boton boton--primario boton--bloque boton--brillo" disabled={enviando}>
+            {enviando ? <span className="spinner spinner--claro" /> : <>Ingresar <Icono nombre="siguiente" tam={18} /></>}
           </button>
 
+          <div className="separador"><span>o entra con una cuenta de prueba</span></div>
+
           <div className="cuentas-prueba">
-            <div className="cuentas-prueba__cabecera">
-              <strong>Cuentas de prueba</strong>
-              <span>Toca una para llenar el formulario</span>
-            </div>
             {USUARIOS_PRUEBA.map((u) => (
               <button
                 type="button"
                 key={u.email}
-                className="cuenta-prueba"
+                className={`cuenta-prueba ${email === u.email ? 'cuenta-prueba--activa' : ''}`}
+                aria-pressed={email === u.email}
                 onClick={() => {
                   setEmail(u.email)
                   setPassword(PASSWORD_PRUEBA)
                   setError('')
                 }}
               >
-                <span className="cuenta-prueba__rol">{u.rol}</span>
-                <span className="mono">{u.email}</span>
+                <span className={`cuenta-prueba__icono cuenta-prueba__icono--${u.tono}`}><Icono nombre={u.icono} tam={18} /></span>
+                <span className="cuenta-prueba__texto">
+                  <span className="cuenta-prueba__rol">{u.rol}</span>
+                  <span className="cuenta-prueba__correo">{u.email}</span>
+                </span>
               </button>
             ))}
-            <div className="cuentas-prueba__clave">
-              <span>Contraseña: <code>{MODO_DEMO ? 'cualquiera' : PASSWORD_PRUEBA}</code></span>
-              {!MODO_DEMO && (
-                <button type="button" className="boton boton--fantasma" onClick={() => copiar(PASSWORD_PRUEBA)}>Copiar</button>
-              )}
-            </div>
+          </div>
+          <div className="cuentas-prueba__clave">
+            <span>Contraseña de prueba</span>
+            <code>{MODO_DEMO ? 'cualquiera' : PASSWORD_PRUEBA}</code>
+            {!MODO_DEMO && (
+              <button type="button" className="boton-copiar" onClick={async () => { if (await copiar(PASSWORD_PRUEBA)) { setCopiado(true); setTimeout(() => setCopiado(false), 1800) } }}>
+                <Icono nombre={copiado ? 'check' : 'copiar'} tam={14} /> {copiado ? 'Copiada' : 'Copiar'}
+              </button>
+            )}
           </div>
         </form>
         <footer>© {new Date().getFullYear()} RiTech Exports S.A.S. · Fotos de <a href="https://unsplash.com" target="_blank" rel="noreferrer">Unsplash</a></footer>
