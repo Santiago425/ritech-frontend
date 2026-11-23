@@ -787,3 +787,7 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .grafica__area { padding-left: 40px; height: 180px; }
   .distribucion a { grid-template-columns: 96px 1fr 28px; }
 }
+
+.campo__clave { position: relative; display: flex; }
+.campo__clave input { flex: 1; padding-right: 44px; }
+.campo__clave .boton-icono { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); }

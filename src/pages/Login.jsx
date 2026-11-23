@@ -31,6 +31,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [verClave, setVerClave] = useState(false)
   const [lento, setLento] = useState(false)
 
   // El backend gratuito se duerme tras un rato sin uso: se despierta apenas se abre el login.
@@ -88,7 +89,12 @@ export default function Login() {
           </label>
           <label className="campo">
             <span>Contraseña</span>
-            <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            <div className="campo__clave">
+              <input type={verClave ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+              <button type="button" className="boton-icono" onClick={() => setVerClave((v) => !v)} aria-label={verClave ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={verClave}>
+                <Icono nombre={verClave ? 'ojoTachado' : 'ojo'} tam={18} />
+              </button>
+            </div>
           </label>
 
           {lento && (
