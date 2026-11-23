@@ -7,7 +7,7 @@ import Icono from '../components/Icono.jsx'
 import ProductorForm from '../components/ProductorForm.jsx'
 import { useCarga } from '../hooks.js'
 import { normalizar } from '../utils.js'
-import Ilustracion from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
 
 
 /** SCRUM-14: productores proveedores; desde aquí se entra a sus fincas. */
@@ -37,7 +37,7 @@ export default function Productores() {
           <h1>Productores y fincas</h1>
           <p className="texto-suave">Proveedores de café y cacao y los predios de donde sale cada lote.</p>
         </div>
-        <Ilustracion nombre="productores" />
+        <FotoModulo nombre="productores" />
         {puedeGestionar && <button className="boton boton--primario" onClick={() => setNuevo(true)}>+ Nuevo productor</button>}
       </header>
 

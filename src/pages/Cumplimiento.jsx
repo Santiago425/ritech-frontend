@@ -8,7 +8,7 @@ import Icono from '../components/Icono.jsx'
 import ReglaForm from '../components/ReglaForm.jsx'
 import { useCarga } from '../hooks.js'
 import { formatoFecha } from '../utils.js'
-import Ilustracion from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
 
 const TIPOS = { AMBOS: 'Café y cacao', CAFE: 'Café', CACAO: 'Cacao' }
 
@@ -183,7 +183,7 @@ export default function Cumplimiento() {
           <h1>Cumplimiento UE</h1>
           <p className="texto-suave">Vencimiento de certificados y reglas del Reglamento EUDR y de contaminantes que se exigen para exportar.</p>
         </div>
-        <Ilustracion nombre="cumplimiento" />
+        <FotoModulo nombre="cumplimiento" />
       </header>
 
       {verAlertas && verReglas && (

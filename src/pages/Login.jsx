@@ -4,7 +4,7 @@ import { MODO_DEMO, despertarServidor } from '../api/cliente.js'
 import { useSesion } from '../auth/SesionContext.jsx'
 import Icono from '../components/Icono.jsx'
 import Marca from '../components/Marca.jsx'
-import paisaje from '../assets/ilustraciones/paisaje-login.svg'
+import { FOTOS } from '../fotos.js'
 
 const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -67,7 +67,7 @@ export default function Login() {
   return (
     <div className="login">
       <section className="login__panel">
-        <img src={paisaje} alt="" className="login__paisaje" aria-hidden="true" />
+        <img src={FOTOS.cafetal(1400)} alt="" className="login__paisaje login__paisaje--foto" aria-hidden="true" />
         <Marca claro />
         <div className="login__mensaje">
           <h1>Exportaciones de café y cacao con trazabilidad de origen a destino.</h1>
@@ -139,7 +139,7 @@ export default function Login() {
             </div>
           </div>
         </form>
-        <footer>© {new Date().getFullYear()} RiTech Exports S.A.S.</footer>
+        <footer>© {new Date().getFullYear()} RiTech Exports S.A.S. · Fotos de <a href="https://unsplash.com" target="_blank" rel="noreferrer">Unsplash</a></footer>
       </section>
     </div>
   )

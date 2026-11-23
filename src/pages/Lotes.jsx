@@ -7,7 +7,7 @@ import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import LoteForm from '../components/LoteForm.jsx'
 import { useCarga } from '../hooks.js'
 import { ESTADOS_LOTE, LOTE_INSPECCIONABLE, formatoFecha, formatoKg } from '../utils.js'
-import Ilustracion from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
 
 export default function Lotes() {
   const { esCliente, tienePermiso } = useSesion()
@@ -44,7 +44,7 @@ export default function Lotes() {
             {esCliente ? 'Consulta el origen y la calidad de los lotes que compraste.' : esInspector ? 'Inspecciona los lotes y emite el dictamen de calidad.' : 'Lotes de café y cacao con su calidad y trazabilidad.'}
           </p>
         </div>
-        <Ilustracion nombre="lotes" />
+        <FotoModulo nombre="lotes" />
         {tienePermiso('LOTES_CREAR') && (
           <button className="boton boton--primario" onClick={() => setNuevo(true)} disabled={!productos.datos}>+ Registrar lote</button>
         )}

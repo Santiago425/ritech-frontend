@@ -8,7 +8,7 @@ import Icono from '../components/Icono.jsx'
 import OrdenForm from '../components/OrdenForm.jsx'
 import { useCarga } from '../hooks.js'
 import { ESTADOS_ORDEN, formatoDinero, formatoFecha } from '../utils.js'
-import Ilustracion from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
 
 /** SCRUM-25: órdenes de exportación. El cliente UE solo ve las suyas (lo filtra el backend). */
 export default function Ordenes() {
@@ -42,7 +42,7 @@ export default function Ordenes() {
             {esCliente ? 'Pedidos de café y cacao a nombre de tu empresa.' : 'Pedidos de los importadores con sus lotes asignados, valor y estado.'}
           </p>
         </div>
-        <Ilustracion nombre="ordenes" />
+        <FotoModulo nombre="ordenes" />
         {puedeGestionar && (
           <button className="boton boton--primario" onClick={() => setNueva(true)} disabled={!clientes.datos}>
             + Nueva orden

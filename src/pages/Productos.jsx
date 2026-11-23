@@ -6,7 +6,8 @@ import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import Modal from '../components/Modal.jsx'
 import { useCarga } from '../hooks.js'
-import Ilustracion, { MiniaturaProducto } from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
+import { MiniaturaProducto } from '../components/Ilustracion.jsx'
 
 const HS = /^[0-9]{4}([0-9]{2}){0,3}$/
 const TIPOS = { CAFE: 'Café', CACAO: 'Cacao' }
@@ -47,7 +48,7 @@ export default function Productos() {
           <h1>Productos</h1>
           <p className="texto-suave">Café y cacao que se exportan, con su variedad y código arancelario HS para aduanas.</p>
         </div>
-        <Ilustracion nombre="productos" />
+        <FotoModulo nombre="productos" />
         {puedeGestionar && <button className="boton boton--primario" onClick={() => setModal({ tipo: 'form' })}>+ Nuevo producto</button>}
       </header>
 

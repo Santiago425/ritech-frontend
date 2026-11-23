@@ -872,3 +872,55 @@ fieldset.campo legend { padding: 0; margin-bottom: 8px; }
   .bienvenida::after { background: linear-gradient(90deg, var(--azul-900) 10%, rgba(11, 31, 46, 0.4)); }
   .login__paisaje { height: 100%; opacity: 0.28; }
 }
+
+.pagina__cabecera:has(.pagina__foto) {
+  position: relative; overflow: hidden; align-items: center; min-height: 132px; padding: 22px 26px;
+  border: 1px solid var(--borde); border-radius: 16px; background: var(--superficie);
+}
+.pagina__cabecera:has(.pagina__foto) > :not(.pagina__foto) { position: relative; z-index: 1; }
+.pagina__cabecera:has(.pagina__foto) > div:first-child { flex: 1 1 320px; max-width: 560px; }
+.pagina__foto {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 52%; background-size: cover; background-position: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%); mask-image: linear-gradient(90deg, transparent, #000 55%);
+}
+.pagina__cabecera:has(.pagina__foto) .boton { box-shadow: 0 6px 18px rgba(11, 31, 46, 0.25); }
+
+.login__paisaje--foto { height: 100%; object-position: center; opacity: 1; }
+.login__panel:has(.login__paisaje--foto)::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 31, 46, 0.88) 0%, rgba(11, 31, 46, 0.55) 45%, rgba(11, 31, 46, 0.85) 100%);
+}
+.login__panel:has(.login__paisaje--foto) > :not(.login__paisaje) { z-index: 2; }
+.login__formulario footer a { color: inherit; }
+
+.bienvenida__paisaje--foto { width: 75%; object-position: center 40%; }
+.bienvenida:has(.bienvenida__paisaje--foto)::after { background: linear-gradient(90deg, var(--azul-900) 28%, rgba(11, 31, 46, 0.7) 50%, rgba(11, 31, 46, 0.1) 85%); }
+
+.recorrido { margin-top: 4px; }
+.recorrido__cabecera { margin-bottom: 14px; }
+.recorrido__cabecera h2 { font-size: 1.15rem; }
+.recorrido__pasos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.recorrido__paso {
+  position: relative; overflow: hidden; min-height: 190px; border-radius: 14px; padding: 16px; display: flex; align-items: flex-end; gap: 10px;
+  background-size: cover; background-position: center; color: #fff; box-shadow: var(--sombra); transition: transform 0.2s ease;
+}
+.recorrido__paso::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 31, 46, 0.05) 30%, rgba(11, 31, 46, 0.88)); }
+.recorrido__paso:hover { transform: translateY(-3px); }
+.recorrido__paso > * { position: relative; }
+.recorrido__paso strong { display: block; font-size: 1rem; }
+.recorrido__paso span:not(.recorrido__numero) { display: block; font-size: 0.82rem; color: #dbe5ee; line-height: 1.4; margin-top: 2px; }
+.recorrido__numero { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--cacao); font-weight: 700; font-size: 0.85rem; }
+
+.lateral__pie { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(11, 31, 46, 0.35), rgba(11, 31, 46, 0.9)), url('https://images.unsplash.com/photo-1551610290-e153ec567dd8?auto=format&fit=crop&w=500&q=60') center / cover; }
+
+@media (max-width: 1080px) {
+  .recorrido__pasos { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .pagina__foto { width: 100%; opacity: 0.18; -webkit-mask-image: none; mask-image: none; }
+  .bienvenida__paisaje--foto { width: 100%; opacity: 0.5; }
+}
+@media (max-width: 520px) {
+  .recorrido__pasos { grid-template-columns: 1fr; }
+  .recorrido__paso { min-height: 150px; }
+}

@@ -7,7 +7,7 @@ import { Cargando, ErrorCaja, Vacio } from '../components/Estados.jsx'
 import Icono from '../components/Icono.jsx'
 import { useCarga } from '../hooks.js'
 import { ESTADOS_ENVIO, formatoFecha, normalizar, resumenArribo } from '../utils.js'
-import Ilustracion from '../components/Ilustracion.jsx'
+import FotoModulo from '../components/FotoModulo.jsx'
 
 export default function Envios() {
   const { esCliente } = useSesion()
@@ -38,7 +38,7 @@ export default function Envios() {
             {esCliente ? 'Consulta el estado y la ubicación de los envíos de tus órdenes.' : 'Estado y ubicación de todos los envíos programados.'}
           </p>
         </div>
-        <Ilustracion nombre="envios" />
+        <FotoModulo nombre="envios" />
       </header>
 
       <section className="tarjeta">
